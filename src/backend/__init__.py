@@ -1,1 +1,1 @@
-from model import RepositoryRedis
+from .model import RepositoryRedis

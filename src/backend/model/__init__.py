@@ -1,1 +1,1 @@
-from redis_db import RepositoryRedis
+from .redis_db import RepositoryRedis

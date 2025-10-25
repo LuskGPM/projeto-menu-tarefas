@@ -1,4 +1,4 @@
-from connection import ConnectionRedis
+from .connection import ConnectionRedis
 from redis import Redis
 from typing import Dict
 
