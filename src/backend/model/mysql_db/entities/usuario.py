@@ -10,6 +10,9 @@ class Usuario(Base):
     nickname: Mapped[str] = mapped_column(String(90), nullable=False, unique=True)
     senha: Mapped[str] = mapped_column(String(255), nullable=False)
     
-    def __repr__(self) -> str:
-        return f'Nome: {self.nome}, nick: {self.nickname}'
-    
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'nickname': self.nickname
+        }

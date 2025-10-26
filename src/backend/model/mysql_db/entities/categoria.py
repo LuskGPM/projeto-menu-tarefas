@@ -9,6 +9,9 @@ class Categoria(Base):
     nome: Mapped[str] = mapped_column(String(60), nullable=False)
     cor: Mapped[str] = mapped_column(String(7), nullable=False)
     
-    def __repr__(self) -> str:
-        return f'cor: {self.cor}, nome: {self.nome}'
-    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'cor': self.cor
+        }

@@ -15,3 +15,15 @@ class Tarefa(Base):
     data_criacao: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     data_atualizacao: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
     
+    def to_dict(self) -> dict:
+        return {
+            'id': self.id,
+            'titulo': self.titulo,
+            'descricao': self.descricao,
+            'status': self.status,
+            'prioridade': self.prioridade,
+            'categoria_id': self.categoria_id,
+            'data_criacao': self.data_criacao.isoformat() if self.data_criacao else None,
+            'data_atualizacao': self.data_atualizacao.isoformat() if self.data_atualizacao else None
+        }
+    
