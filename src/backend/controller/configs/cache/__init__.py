@@ -1,2 +1,2 @@
 from .cache_control import RedisControl
-from .cache_keys import COMMON_KEYS, ENTITIES, TAREFA_STATUS, USUARIO_STATUS, build_cache_key
+from .cache_keys import USUARIO_STATUS, TAREFA_STATUS, ENTITIES, COMMON_KEYS, build_cache_key

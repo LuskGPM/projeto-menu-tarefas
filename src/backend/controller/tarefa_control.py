@@ -1,37 +1,34 @@
-from ..model import Tarefa, TarefaRepository
-from .configs import RedisControl as RedCache
-from .configs import build_cache_key, COMMON_KEYS, ENTITIES, TAREFA_STATUS
+from ..model.mysql_db import Tarefa, TarefaRepository
+from ..view.schemas import TarefaCreate
+from .configs import RedisControl as RedCache, COMMON_KEYS
+from .configs.cache import build_cache_key, ENTITIES, TAREFA_STATUS
 from typing import Dict
 
 class TarefaControler:
     def __init__(self):
         self.__repo_tarefa = TarefaRepository()
         
-    def insert_tarefa(self, dados: Dict):
-        try:
-            # 1. Criar e inserir no MySQL
-            new_tarefa = Tarefa(**dados)
-            self.__repo_tarefa.insert(new_tarefa)
-            
-            # 2. Cache no Redis (dados da tarefa criada)
-            tarefa_dict = new_tarefa.to_dict()
-            cache = RedCache(COMMON_KEYS['TAREFA_PENDENTE'], tarefa_dict)
-            cache.processar_hash_cache()
-            
-            # 3. Invalidar caches de listagem
-            self.__invalidate_status_cache(dados.get('status'))
-            
-            return tarefa_dict
-            
-        except Exception as e:
-            raise Exception(f'Erro ao inserir tarefa: {str(e)}')
+    def processar_tarefa(self, tarefa: TarefaCreate):
+        # 1. Criar e inserir no MySQL
+        new_tarefa = Tarefa(**tarefa)
+        self.__repo_tarefa.insert(tarefa)
+        
+        # 2. Cache no Redis (dados da tarefa criada)
+        tarefa_dict = new_tarefa.to_dict()
+        cache = RedCache(COMMON_KEYS['TAREFA_PENDENTE'], tarefa_dict)
+        cache.processar_hash_cache()
+        
+        # 3. Invalidar caches de listagem
+        #self.__invalidate_status_cache(dados.get('status'))
+        return tarefa_dict
+
     
     def __invalidate_status_cache(self, status: str):
         """Remove cache de listagem por status"""
         # Implementar limpeza de cache quando necessário
         pass
     
-    def get_tarefa_by_status(self, status: str = 'PENDENTE'):
+    def receber_tarefa_por_status(self, status: str = 'PENDENTE'):
         # 1. Tenta buscar no cache primeiro
         cache_key = build_cache_key(ENTITIES['TAREFA'], TAREFA_STATUS[status])
         cache = RedCache(cache_key)
