@@ -1,1 +1,0 @@
-from .cache_control import RedisControl

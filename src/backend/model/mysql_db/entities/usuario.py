@@ -8,7 +8,7 @@ class Usuario(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     nome: Mapped[str] = mapped_column(String(60), nullable=False)
     nickname: Mapped[str] = mapped_column(String(90), nullable=False, unique=True)
-    senha: Mapped[str] = mapped_column(String(255), nullable=False)
+    senha_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     
     def to_dict(self) -> dict:
         return {

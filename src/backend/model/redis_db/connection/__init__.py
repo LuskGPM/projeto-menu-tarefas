@@ -1,1 +1,2 @@
 from .connection_redis import ConnectionRedis
+from .connection_config import TIMER_REDIS_EX

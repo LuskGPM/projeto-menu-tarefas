@@ -10,7 +10,7 @@ class ConnectionRedis:
         self.__username: str = DATABASE_SETTINGS['USERNAME']
         self.__password: str = DATABASE_SETTINGS['PASSWORD']
         
-    def __conn(self) -> Redis | str:
+    def __conn(self) -> Redis | AuthenticationError:
         try:
             r = Redis(
                 host=self.__host,
@@ -21,9 +21,7 @@ class ConnectionRedis:
             )
             return r
         except AuthenticationError as e:
-            return f'erro: {e}'
-        except:
-            return 'Algum erro ao conectar ao banco'
+            raise AuthenticationError('Erro ao conectar ao banco: ',{e})
             
-    def getConn(self) -> Redis | str:
+    def getConn(self) -> Redis | AuthenticationError:
         return self.__conn()
