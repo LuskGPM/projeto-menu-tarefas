@@ -15,7 +15,7 @@ class UsuarioControler:
         senha_do_banco = dados_usuario.senha_hash
         ## Validação da senha do banco com a senha fornecida
         if not HashSenha(user.senha_antiga, senha_do_banco).is_equal():
-            raise ValueError('Senha incorreta')
+            raise ValueError('<ControlerUser> Senha incorreta')
         
         new_dados_usuario = user.model_dump(exclude_unset=True) # Excluí dados não fornecidos
         # Verifica se existe uma nova senha e trata ela
@@ -51,7 +51,7 @@ class UsuarioControler:
         # amazonq-ignore-next-line
         senha_do_banco = self.__user_repo.select_by_nickname(user.nickname).senha_hash
         if not HashSenha(user.senha_login, senha_do_banco).is_equal():
-            raise ValueError('Senha fornecida pelo front não condiz com a senha do banco')
+            raise ValueError('<ControlerUser> Senha fornecida pelo front não condiz com a senha do banco')
         
         RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'], cache_data=user.nickname).processar_cache()
     
