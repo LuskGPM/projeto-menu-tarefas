@@ -16,7 +16,7 @@ class TarefaControler:
             # 2. Cache no Redis (dados da tarefa criada)
             tarefa_dict = new_tarefa.to_dict()
             cache = RedCache(COMMON_KEYS['TAREFA_PENDENTE'], tarefa_dict)
-            cache.set_hash_cache()
+            cache.processar_hash_cache()
             
             # 3. Invalidar caches de listagem
             self.__invalidate_status_cache(dados.get('status'))
@@ -35,7 +35,7 @@ class TarefaControler:
         # 1. Tenta buscar no cache primeiro
         cache_key = build_cache_key(ENTITIES['TAREFA'], TAREFA_STATUS[status])
         cache = RedCache(cache_key)
-        cached_data = cache.get_hash_cache()
+        cached_data = cache.receber_hash_cache()
         
         if cached_data:
             return cached_data
@@ -46,6 +46,6 @@ class TarefaControler:
         
         # 3. Salva no cache para próximas consultas
         cache_with_data = RedCache(cache_key, {'tarefas': tarefas_dict})
-        cache_with_data.set_hash_cache()
+        cache_with_data.processar_hash_cache()
             
         return tarefas_dict
