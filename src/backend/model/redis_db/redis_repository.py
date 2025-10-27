@@ -1,30 +1,34 @@
 from .connection import ConnectionRedis, TIMER_REDIS_EX
-from redis import Redis
 from typing import Dict, Any
 
 class RepositoryRedis(ConnectionRedis):
     def __init__(self) -> None:
         super().__init__()
-        self.__conn_redis: Redis = self.getConn()
         self.__timer: int = TIMER_REDIS_EX['TIMER_30']
         
-    def set_key(self, name_key: str, value_key: Any) -> None:
-        self.__conn_redis.setex(name_key, self.__timer, value_key)
+    async def set_key(self, name_key: str, value_key: Any) -> None:
+        async with self as redis:
+            await redis.session.set(name_key, value_key)
         
-    def get_key(self, name_key: str) -> Any | None:
-        return self.__conn_redis.get(name_key)
+    async def get_key(self, name_key: str) -> Any | None:
+        async with self as redis:
+            return await redis.session.get(name_key)
         
-    def set_hash_cache(self, name_hash: str, key_hash: str, value_hash: any) -> None:
-        self.__conn_redis.hset(name_hash, key_hash, value_hash)
-        self.__conn_redis.expire(name=name_hash, time=self.__timer)
+    async def set_hash_cache(self, name_hash: str, key_hash: str, value_hash: any) -> None:
+        async with self as redis:
+            await redis.session.hset(name_hash, key_hash, value_hash)
+            await redis.session.expire(name_hash, time=self.__timer)
         
-    def get_hash_all(self, name_hash) -> Dict | None:
-        return self.__conn_redis.hgetall(name_hash)
+    async def get_hash_all(self, name_hash) -> Dict | None:
+        async with self as redis:
+            return await redis.session.hgetall(name_hash)
         
-    def delete_cache(self, name_hash: str) -> bool:
-        result = self.__conn_redis.delete(name_hash)
-        return result > 0 # Se houve um ou mais deletes retorna True
+    async def delete_cache(self, name_hash: str) -> bool:
+        async with self as redis:
+            result = await redis.session.delete(name_hash)
+            return result > 0 # Se houver um ou mais deletes, retorna True
 
-    def expire(self, name_key) -> None:
-        self.__conn_redis.expire(name_key, time=self.__timer)
+    async def expire(self, name_key) -> None:
+        async with self as redis:
+            await redis.session.expire(name_key, time=self.__timer)
         

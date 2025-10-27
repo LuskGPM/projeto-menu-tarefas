@@ -1,51 +1,52 @@
 from ..connection import ConnectionMySQL
-from ..entities import Usuario
+from sqlalchemy import select, delete
 from typing import List, Any
 
 class MySQLRepository(ConnectionMySQL):
     
-    def select(self, model: Any) -> List[Any]:
-        with self as db:
-            return db.session.query(model).all()
+    async def select(self, model: Any) -> List[Any]:
+        async with self as db:
+            result = await db.session_async.execute(select(model))
+            return result.scalars().all()
         
-    def select_by_id(self, model: Any, id: int) -> Any | None:
-        with self as db:
-            return db.session.query(model).filter(model.id == id).first()
+    async def select_by_id(self, model: Any, id: int) -> Any | None:
+        async with self as db:
+            result = await db.session_async.execute(select(model).where(model.id == id))
+            return await result.scalar_one_or_none()
             
-    def insert(self, obj: Any) -> None | Exception:
-        with self as db:
+    async def insert(self, obj: Any) -> None | Exception:
+        async with self as db:
             try:
-                db.session.add(obj)
-                db.session.commit()
+                db.session_async.add(obj)
+                await db.session_async.commit()
             except Exception as e:
-                db.session.rollback()
+                await db.session_async.rollback()
                 raise Exception(f'<MySQLRepo>: Erro ao inserir: {str(e)}')
             
-    def insert_multiples(self, list_obj: List[Any]) -> None | Exception:
-        with self as db:
+    async def insert_multiples(self, list_obj: List[Any]) -> None | Exception:
+        async with self as db:
             try:
-                for obj in list_obj:
-                    db.session.add(obj)
-                db.session.commit()
+                db.session_async.add_all(list_obj)
+                await db.session_async.commit()
             except Exception as e:
-                db.session.rollback()
+                await db.session_async.rollback()
                 raise Exception(f'<MySQLRepo>: Erro ao inserir multiplos objetos: {str(e)}')
     
-    def update(self, obj: Any) -> None | Exception:
-        with self as db:
+    async def update(self, obj: Any) -> None | Exception:
+        async with self as db:
             try:
-                db.session.merge(obj)
-                db.session.commit()
+                db.session_async.merge(obj)
+                await db.session_async.commit()
             except Exception as e:
-                db.session.rollback()
+                await db.session_async.rollback()
                 raise Exception(f'<MySQLRepo>: Erro ao atualizar objeto: {str(e)}')
 
-    def delete(self, model: Any, id: int) -> None | Exception:
-        with self as db:
+    async def delete(self, model: Any, id: int) -> None | Exception:
+        async with self as db:
             try:
-                db.session.query(model).filter(model.id == id).delete()
-                db.session.commit()
+                await db.session_async.execute(delete(model).where(model.id == id))
+                await db.session_async.commit()
             except Exception as e:
-                db.session.rollback()
+                await db.session_async.rollback()
                 raise Exception(f'<MySQLRepo>: Erro ao deletar objeto: {str(e)}')
             
