@@ -10,12 +10,24 @@ class TarefaControler:
         
     def processar_tarefa(self, tarefa: TarefaCreate):
         # 1. Criar e inserir no MySQL
-        new_tarefa = Tarefa(**tarefa)
-        self.__repo_tarefa.insert(tarefa)
+        new_tarefa = Tarefa(
+            titulo = tarefa.titulo,
+            descricao = tarefa.descricao,
+            status = tarefa.status,
+            prioridade = tarefa.prioridade,
+            categoria_id = tarefa.categoria_id
+        )
+        self.__repo_tarefa.insert(new_tarefa)
         
-        # 2. Cache no Redis (dados da tarefa criada)
-        tarefa_dict = new_tarefa.to_dict()
-        cache = RedCache(COMMON_KEYS['TAREFA_PENDENTE'], tarefa_dict)
+        # 2. Cache no Redis (dados básicos da tarefa)
+        tarefa_dict = {
+            'titulo': tarefa.titulo,
+            'descricao': tarefa.descricao,
+            'status': tarefa.status,
+            'prioridade': tarefa.prioridade,
+            'categoria_id': tarefa.categoria_id
+        }
+        cache = RedCache(COMMON_KEYS['TAREFAS_PENDENTES'], tarefa_dict)
         cache.processar_hash_cache()
         
         # 3. Invalidar caches de listagem
