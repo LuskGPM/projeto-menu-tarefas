@@ -2,5 +2,6 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from ...controller import UsuarioControler
 
-router_user = APIRouter()
-user_controll = UsuarioControler()
+class UserRouter:
+    def __init__(self):
+        self.__user_route = APIRouter()
