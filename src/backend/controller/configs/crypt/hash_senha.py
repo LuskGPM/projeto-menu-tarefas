@@ -2,8 +2,10 @@ import bcrypt
     
 class HashSenha:
     def __init__(self, senha_do_front: str | None = None, senha_do_banco: str | None = None) -> None:
-        self.__senha_do_front: bytes = senha_do_front.encode('utf-8')
-        self.__senha_do_banco: bytes = senha_do_banco.encode('utf-8')
+        if senha_do_front:
+            self.__senha_do_front: bytes = senha_do_front.encode('utf-8')
+        if senha_do_banco:
+            self.__senha_do_banco: bytes = senha_do_banco.encode('utf-8')
         self.__salt: bytes = bcrypt.gensalt(12)
         
     def hash(self) -> bytes | ValueError:

@@ -1,4 +1,4 @@
-from ....model import RepositoryRedis
+from ....model.redis_db import RepositoryRedis
 from typing import Dict, Any
 
 class RedisControl:

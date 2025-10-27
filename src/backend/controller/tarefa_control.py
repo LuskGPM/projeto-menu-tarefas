@@ -1,7 +1,7 @@
 from ..model.mysql_db import Tarefa, TarefaRepository
 from ..view.schemas import TarefaCreate
-from configs import RedisControl as RedCache, COMMON_KEYS
-from configs.cache import build_cache_key, ENTITIES, TAREFA_STATUS
+from .configs import RedisControl as RedCache, COMMON_KEYS
+from .configs.cache import build_cache_key, ENTITIES, TAREFA_STATUS
 from typing import Dict
 
 class TarefaControler:
