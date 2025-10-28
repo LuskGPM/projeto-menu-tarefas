@@ -9,7 +9,7 @@ class ConnectionRedis:
         
     async def __conn(self):
         try:
-            r = redis.from_url(self.__redis_url, decode_responses=True)
+            r = redis.from_url(self.__redis_url, DATABASE_SETTINGS['DECODE_RESPONSES'])
             return r
         except AuthenticationError as e:
             raise AuthenticationError('Erro ao conectar ao banco: ',{e})
