@@ -6,8 +6,9 @@ class UsuarioControler(UsuarioRepository):
     async def processar_update(self, user: UsuarioUpdate) -> None | ValueError:
         # Busca o nickname na sessão em cache
         sessao = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        nickname_sessao = await sessao.receber_cache()
-        dados_usuario = await self.select_by_nickname(nickname_sessao)
+        dados_sessao = await sessao.receber_hash_cache()
+        nickname_sessao = dados_sessao['nickname'] if dados_sessao else None
+        dados_usuario = await self._select_by_nickname(nickname_sessao)
         # Senha do banco para validar o update
         senha_do_banco = dados_usuario.senha_hash
         ## Validação da senha do banco com a senha fornecida
@@ -23,7 +24,7 @@ class UsuarioControler(UsuarioRepository):
         
         for key, value in new_dados_usuario.items():
             setattr(dados_usuario, key, value)
-        await self.update(dados_usuario)
+        await self._update(dados_usuario)
     
     async def processar_cadastro(self, user: UsuarioCreate) -> None:
         # Cadastra novo usuário
@@ -35,23 +36,28 @@ class UsuarioControler(UsuarioRepository):
             senha_hash = senha_hash
         )
         ## Insere novo usuário
-        await self.insert(new_user)
+        await self._insert(new_user)
     
     async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
         # Verificar se o nickname já existe
-        nickname_no_banco = await self.select_by_nickname(nickname)
+        nickname_no_banco = await self._select_by_nickname(nickname)
         if nickname_no_banco: # Se o nickname for encontrado, retorna False
             return False
         return True
     
-    async def autenticar_usuario(self, user: UsuarioLogin) -> None | ValueError:
+    async def processar_login(self, user: UsuarioLogin) -> None | ValueError:
         # amazonq-ignore-next-line
-        user_banco = await self.select_by_nickname(user.nickname)
+        user_banco = await self._select_by_nickname(user.nickname)
         senha_user = user_banco.senha_hash
         if not HashSenha(user.senha_login, senha_user).is_equal():
             raise ValueError('<ControlerUser>: Senha fornecida pelo front não condiz com a senha do banco')
-        cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'], cache_data=user.nickname)
-        await cache.processar_cache()
+        user_session = {
+            'id': user_banco.id,
+            'nome': user_banco.nome,
+            'nickname': user_banco.nickname
+        }
+        cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'], cache_data=user_session)
+        await cache.processar_hash_cache()
     
     async def encerrar_sessao(self) -> str:
         cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'])
@@ -62,7 +68,7 @@ class UsuarioControler(UsuarioRepository):
     
     async def esta_logado(self) -> bool:
         cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        sessao_ativa = await cache.receber_cache()
+        sessao_ativa = await cache.receber_hash_cache()
         if sessao_ativa:
             await cache.renovar_cache()
             return True
@@ -70,6 +76,16 @@ class UsuarioControler(UsuarioRepository):
     
     async def obter_nickname_sessao(self) -> str | None:
         cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        cache_nickname = await cache.receber_cache()
-        if cache_nickname:
-            return cache_nickname
+        dados_sessao = await cache.receber_hash_cache()
+        if dados_sessao:
+            return dados_sessao['nickname']
+
+    async def obter_dados_sessao(self) -> dict | None:
+        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
+        return await cache.receber_hash_cache()
+    
+    async def obter_nome_sessao(self) -> str | None:
+        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
+        dados_sessao = await cache.receber_hash_cache()
+        if dados_sessao:
+            return dados_sessao['nome']

@@ -15,7 +15,7 @@ class TarefaControler(TarefaRepository):
             prioridade = tarefa.prioridade,
             categoria_id = tarefa.categoria_id
         )
-        await self.insert(new_tarefa)
+        await self._insert(new_tarefa)
         
         # 2. Cache no Redis (dados básicos da tarefa)
         tarefa_dict = {
@@ -52,7 +52,7 @@ class TarefaControler(TarefaRepository):
         print('<TarefaControler>: Pegou do Banco')
         
         # 2. Se não tem no cache, busca no MySQL
-        tarefas = await self.select_by_status(TAREFA_STATUS[status])
+        tarefas = await self._select_by_status(TAREFA_STATUS[status])
         tarefas_dict = [tarefa.to_dict() for tarefa in tarefas]
         
         # 3. Salva no cache para próximas consultas
