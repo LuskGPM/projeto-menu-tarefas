@@ -3,50 +3,63 @@ from ..model.mysql_db import Usuario, UsuarioRepository
 from .configs import RedisControl as RedCache, HashSenha, COMMON_KEYS
 
 class UsuarioControler(UsuarioRepository):
-    async def processar_update(self, user: UsuarioUpdate) -> None | ValueError:
-        # Busca o nickname na sessão em cache
+    async def processar_update(self, user: UsuarioUpdate) -> None:
+        # Busca dados da sessão
         sessao = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
         dados_sessao = await sessao.receber_hash_cache()
-        nickname_sessao = dados_sessao['nickname'] if dados_sessao else None
-        dados_usuario = await self._select_by_nickname(nickname_sessao)
-        # Senha do banco para validar o update
-        senha_do_banco = dados_usuario.senha_hash
-        ## Validação da senha do banco com a senha fornecida
-        if not HashSenha(user.senha_antiga, senha_do_banco).is_equal():
-            raise ValueError('<ControlerUser>: Senha incorreta')
+        if not dados_sessao:
+            raise ValueError('Usuário não está logado')
         
-        new_dados_usuario = user.model_dump(exclude_unset=True) # Excluí dados não fornecidos
-        # Verifica se existe uma nova senha e trata ela
-        if 'senha_nova' in new_dados_usuario:
-            new_dados_usuario['senha_hash'] = HashSenha(new_dados_usuario['senha_nova']).hash()
-            del new_dados_usuario['senha_nova']
-        new_dados_usuario.pop('senha_antiga', None)
+        # Busca usuário pelo ID
+        dados_usuario = await self._select_by_id(Usuario, dados_sessao['id'])
+        if not dados_usuario:
+            raise ValueError('Usuário não encontrado')
         
-        for key, value in new_dados_usuario.items():
+        # Valida senha atual
+        if not HashSenha(user.senha_antiga, dados_usuario.senha_hash).is_equal():
+            raise ValueError('Senha atual incorreta')
+        
+        # Prepara dados para atualização
+        update_data = user.model_dump(exclude_unset=True, exclude={'senha_antiga', 'senha_nova'})
+        
+        # Processa nova senha se fornecida
+        if user.senha_nova:
+            update_data['senha_hash'] = HashSenha(user.senha_nova).hash()
+        
+        # Atualiza campos no objeto
+        for key, value in update_data.items():
             setattr(dados_usuario, key, value)
+        
+        # Salva no banco
         await self._update(dados_usuario)
+        
+        # Atualiza cache da sessão se nickname mudou
+        if 'nickname' in update_data:
+            dados_sessao['nickname'] = update_data['nickname']
+            cache_atualizado = RedCache(COMMON_KEYS['USUARIO_LOGADO'], dados_sessao)
+            await cache_atualizado.processar_hash_cache()
     
     async def processar_cadastro(self, user: UsuarioCreate) -> None:
-        # Cadastra novo usuário
-        ## Hash da senha
+        # Hash da senha
         senha_hash = HashSenha(user.senha_front).hash()
+        
         new_user = Usuario(
             nome = user.nome,
             nickname = user.nickname,
             senha_hash = senha_hash
         )
-        ## Insere novo usuário
+        
+        # Insere novo usuário
         await self._insert(new_user)
     
     async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
         # Verificar se o nickname já existe
         nickname_no_banco = await self._select_by_nickname(nickname)
-        if nickname_no_banco: # Se o nickname for encontrado, retorna False
-            return False
-        return True
+        if nickname_no_banco: # Se o nickname for encontrado, retorna True
+            return True
+        return False
     
     async def processar_login(self, user: UsuarioLogin) -> None | ValueError:
-        # amazonq-ignore-next-line
         user_banco = await self._select_by_nickname(user.nickname)
         senha_user = user_banco.senha_hash
         if not HashSenha(user.senha_login, senha_user).is_equal():
@@ -58,7 +71,7 @@ class UsuarioControler(UsuarioRepository):
         }
         cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'], cache_data=user_session)
         await cache.processar_hash_cache()
-    
+        
     async def encerrar_sessao(self) -> str:
         cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'])
         delete_cache = await cache.excluir_cache()

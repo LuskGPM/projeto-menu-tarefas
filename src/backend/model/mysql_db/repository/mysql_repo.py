@@ -14,7 +14,7 @@ class MySQLRepository(ConnectionMySQL):
         async with self as db:
             statement = select(model).where(model.id == id)
             result = await db.session_async.execute(statement)
-            return await result.scalar_one_or_none()
+            return result.scalar_one_or_none()
             
     async def _insert(self, obj: Any) -> None | Exception:
         async with self as db:
@@ -37,7 +37,7 @@ class MySQLRepository(ConnectionMySQL):
     async def _update(self, obj: Any) -> None | Exception:
         async with self as db:
             try:
-                db.session_async.merge(obj)
+                await db.session_async.merge(obj)
                 await db.session_async.commit()
             except Exception as e:
                 await db.session_async.rollback()

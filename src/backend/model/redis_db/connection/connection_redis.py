@@ -1,15 +1,16 @@
 import redis.asyncio as redis
+from redis.asyncio import Redis
 from redis.exceptions import AuthenticationError
 from .connection_config import DATABASE_SETTINGS
 
 class ConnectionRedis:
     def __init__(self) -> None:
         self.__redis_url: str = DATABASE_SETTINGS['URL']
-        self.session = None
+        self.session: Redis = None
         
     async def __conn(self):
         try:
-            r = redis.from_url(self.__redis_url, DATABASE_SETTINGS['DECODE_RESPONSES'])
+            r = redis.from_url(self.__redis_url, decode_responses = True)
             return r
         except AuthenticationError as e:
             raise AuthenticationError('Erro ao conectar ao banco: ',{e})
@@ -22,4 +23,5 @@ class ConnectionRedis:
         return self
     
     async def __aexit__(self, *args):
-        await self.session.aclose()
+        await self.session.aclose(True)
+        

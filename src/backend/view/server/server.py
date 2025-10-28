@@ -1,7 +1,6 @@
-from fastapi import FastAPI
 import uvicorn
+from fastapi import FastAPI
+from ..routes import rotas_user
 
 server = FastAPI()
-
-if __name__ == '__main__':
-    uvicorn.run(server)
+server.include_router(rotas_user)

@@ -8,10 +8,10 @@ class UsuarioRepository(MySQLRepository):
         async with self as db:
             statement = select(Usuario).where(Usuario.nickname == nickname)
             result = await db.session_async.execute(statement)
-            return await result.scalar_one_or_none()
+            return result.scalar_one_or_none()
         
     async def _nickname_exists(self, nickname) -> bool:
         async with self as db:
             statement = select(Usuario).where(Usuario.nickname == nickname)
             result = await db.session_async.execute(statement)
-            return await result.scalar_one_or_none() is not None
+            return result.scalar_one_or_none() is not None

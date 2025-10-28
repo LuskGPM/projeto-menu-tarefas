@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from ...controller import UsuarioControler
 from ..schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
+from ..dependencies import verificar_login
 
 rotas_user = APIRouter()
 
@@ -9,10 +10,13 @@ rotas_user = APIRouter()
 async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict:
     try:
         user_control = UsuarioControler()
+        verificar_nickname = await user_control.verificar_disponibilidade_nickname(user_dados.nickname)
+        if verificar_nickname:
+            return{'message': 'Usuario já cadastrado'}
         await user_control.processar_cadastro(user_dados)
         return {'message': 'Usuário cadastrado com sucesso'}
     except Exception as e:
-        raise HTTPException(400, f'Erro ao cadastrar dados: {e}')
+        raise HTTPException(400, f'Erro ao cadastrar dados: {e}, {user_dados.nickname, user_dados.nome, user_dados.senha_front}')
     
 @rotas_user.post('/user/login')
 async def rota_user_login(user_dados: UsuarioLogin):
@@ -23,7 +27,7 @@ async def rota_user_login(user_dados: UsuarioLogin):
     except Exception as e:
         raise HTTPException(401, f'Dados inválidos')
     
-@rotas_user.post('/user/logout')
+@rotas_user.post('/user/logout', dependencies=[Depends(verificar_login)])
 async def rota_user_logout():
     try:
         user_control = UsuarioControler()
@@ -32,7 +36,7 @@ async def rota_user_logout():
     except Exception as e:
         raise HTTPException(400, f'Sessão já está encerrada: {e}')
 
-@rotas_user.put('/user/update')
+@rotas_user.put('/user/update', dependencies=[Depends(verificar_login)])
 async def rota_user_update(user_data: UsuarioUpdate):
     try:
         user_control = UsuarioControler()
@@ -41,10 +45,19 @@ async def rota_user_update(user_data: UsuarioUpdate):
     except Exception as e:
         raise HTTPException(400, f'Erro ao atualizar dados: {e}')
     
-@rotas_user.get('/user/me')
-async def rota_user_me():
+@rotas_user.get('/user/me', dependencies=[Depends(verificar_login)])
+async def rota_user_me(request: Request):
     user_control = UsuarioControler()
     dados_sessao = await user_control.obter_dados_sessao()
     if dados_sessao:
         return JSONResponse(dados_sessao, 200)
     raise HTTPException(500, 'Erro ao fornecer dados do usuario')
+
+@rotas_user.get('/')
+async def hello_world(request: Request):
+    return JSONResponse(
+        {
+            'Hello': 'World'
+        },
+        200
+    )
