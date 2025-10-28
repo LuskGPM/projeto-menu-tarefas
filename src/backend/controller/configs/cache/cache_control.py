@@ -1,31 +1,35 @@
 from ....model.redis_db import RepositoryRedis
 from typing import Dict, Any
 
-class RedisControl:
+class RedisControl(RepositoryRedis):
     def __init__(self, cache_key: str, cache_data: Dict | Any | None = None) -> None:
-        self.__redis_repo = RepositoryRedis()
+        super().__init__()
         self.__data: Dict | Any = cache_data or {}
         self.__cache_key = cache_key
         
-    def processar_hash_cache(self) -> None | TypeError:
+    async def processar_hash_cache(self) -> None | TypeError:
         if not isinstance(self.__data, dict):
-            raise TypeError('Objeto precisa ser um dicionário para ser inserido como hash')
+            raise TypeError('<RedisControl>: Objeto precisa ser um dicionário para ser inserido como hash')
         for key, value in self.__data.items():
-            self.__redis_repo.set_hash_cache(self.__cache_key, key_hash=key, value_hash=str(value))
+            await self.set_hash_cache(self.__cache_key, key, value)
             
-    def receber_hash_cache(self) -> Dict | None:
-        return self.__redis_repo.get_hash_all(self.__cache_key)
-    
-    def processar_cache(self) -> None | TypeError:
+    async def processar_cache(self) -> None | TypeError:
         if isinstance(self.__data, dict):
-            raise TypeError('Para trabalhar com dicionários escolha o método set_hash_cache')
-        self.__redis_repo.set_key(self.__cache_key, self.__data)
+            raise TypeError('<RedisControl>: Para trabalhar com dicionários escolha o método set_hash_cache')
+        await self.set_key(self.__cache_key, self.__data)
+    
+    async def renovar_cache(self) -> None:
+        await self.expire(self.__cache_key)
 
-    def receber_cache(self) -> Any | None:
-        return self.__redis_repo.get_key(self.__cache_key)
+    async def receber_hash_cache(self) -> Dict | None:
+        result = await self.get_hash_all(self.__cache_key)
+        return result
     
-    def excluir_cache(self) -> bool:
-        return self.__redis_repo.delete_cache(self.__cache_key)
+    async def receber_cache(self) -> Any | None:
+        result = await self.get_key(self.__cache_key)
+        return result
     
-    def renovar_cache(self) -> None:
-        self.__redis_repo.expire(self.__cache_key)
+    async def excluir_cache(self) -> bool:
+        result = await self.delete_cache(self.__cache_key)
+        return result
+    

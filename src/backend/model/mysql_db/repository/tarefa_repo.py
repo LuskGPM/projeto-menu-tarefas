@@ -1,18 +1,23 @@
 from ..entities import Tarefa
 from .mysql_repo import MySQLRepository
-from typing import List
+from sqlalchemy import select, Sequence
 
 class TarefaRepository(MySQLRepository):
     
-    def select_by_status(self, status: str) -> List[Tarefa] | None:
-        with self as db:
-            return db.session.query(Tarefa).filter_by(status = status).all()
+    async def select_by_status(self, status: str) -> Sequence[Tarefa]:
+        async with self as db:
+            statement = select(Tarefa).where(Tarefa.status == status)
+            result = await db.session_async.execute(statement)
+            return result.scalars().all()
         
-    def select_by_categoria(self, categoria_id: int) -> List[Tarefa] | None:
-        with self as db:
-            return db.session.query(Tarefa).filter_by(categoria_id = categoria_id).all()
+    async def select_by_categoria(self, categoria_id: int) -> Sequence[Tarefa]:
+        async with self as db:
+            statement = select(Tarefa).where(Tarefa.categoria_id == categoria_id)
+            result = await db.session_async.execute(statement)
+            return result.scalars().all()
         
-    def select_by_prioridade(self, prioridade: str) -> List[Tarefa] | None:
-        with self as db:
-            return db.session.query(Tarefa).filter_by(prioridade = prioridade).all()
-        
+    async def select_by_prioridade(self, prioridade: str) -> Sequence[Tarefa]:
+        async with self as db:
+            statement = select(Tarefa).where(Tarefa.prioridade == prioridade)
+            result = await db.session_async.execute(statement)
+            return result.scalars().all()

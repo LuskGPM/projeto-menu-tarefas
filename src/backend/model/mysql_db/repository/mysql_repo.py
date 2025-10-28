@@ -1,17 +1,19 @@
 from ..connection import ConnectionMySQL
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, Sequence
 from typing import List, Any
 
 class MySQLRepository(ConnectionMySQL):
     
-    async def select(self, model: Any) -> List[Any]:
+    async def select(self, model: Any) -> Sequence[Any]:
         async with self as db:
-            result = await db.session_async.execute(select(model))
+            statement = select(model)
+            result = await db.session_async.execute(statement)
             return result.scalars().all()
         
     async def select_by_id(self, model: Any, id: int) -> Any | None:
         async with self as db:
-            result = await db.session_async.execute(select(model).where(model.id == id))
+            statement = select(model).where(model.id == id)
+            result = await db.session_async.execute(statement)
             return await result.scalar_one_or_none()
             
     async def insert(self, obj: Any) -> None | Exception:
@@ -44,7 +46,8 @@ class MySQLRepository(ConnectionMySQL):
     async def delete(self, model: Any, id: int) -> None | Exception:
         async with self as db:
             try:
-                await db.session_async.execute(delete(model).where(model.id == id))
+                statement = delete(model).where(model.id == id)
+                await db.session_async.execute(statement)
                 await db.session_async.commit()
             except Exception as e:
                 await db.session_async.rollback()

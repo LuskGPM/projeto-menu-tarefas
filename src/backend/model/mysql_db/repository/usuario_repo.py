@@ -1,16 +1,23 @@
 from ..entities import Usuario
 from .mysql_repo import MySQLRepository
+from sqlalchemy import select, and_
 
 class UsuarioRepository(MySQLRepository):
     
-    def select_by_nickname(self, nickname) -> Usuario | None:
-        with self as db:
-            return db.session.query(Usuario).filter_by(nickname = nickname).first()
+    async def select_by_nickname(self, nickname) -> Usuario | None:
+        async with self as db:
+            statement = select(Usuario).where(Usuario.nickname == nickname)
+            result = await db.session_async.execute(statement)
+            return await result.scalar_one_or_none()
         
-    def validar_login(self, nickname: str, senha_hash: str) -> Usuario | None:
-        with self as db:
-            return db.session.query(Usuario).filter_by(nickname = nickname, senha_hash = senha_hash).first()
+    async def validar_login(self, nickname: str, senha_hash: str) -> Usuario | None:
+        async with self as db:
+            statement = select(Usuario).where(and_(Usuario.nickname == nickname, Usuario.senha_hash == senha_hash))
+            result = await db.session_async.execute(statement)
+            return await result.scalar_one_or_none()
         
-    def nickname_exists(self, nickname) -> bool:
-        with self as db:
-            return db.session.query(Usuario).filter_by(nickname = nickname).first() is not None
+    async def nickname_exists(self, nickname) -> bool:
+        async with self as db:
+            statement = select(Usuario).where(Usuario.nickname == nickname)
+            result = await db.session_async.execute(statement)
+            return await result.scalar_one_or_none() is not None
