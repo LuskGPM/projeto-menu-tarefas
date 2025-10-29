@@ -1,5 +1,5 @@
 from ..model.mysql_db import Tarefa, TarefaRepository
-from ..view.schemas import TarefaCreate
+from ..api.schemas import TarefaCreate
 from .configs import RedisControl as RedCache, COMMON_KEYS, criar_key
 from typing import Literal, Sequence
 import json

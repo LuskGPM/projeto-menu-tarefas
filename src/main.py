@@ -1,6 +1,6 @@
 import asyncio
 from backend.controller import UsuarioControler, TarefaControler
-from backend.view.schemas import UsuarioCreate, TarefaCreate
+from backend.api.schemas import UsuarioCreate, TarefaCreate
 
 async def cadastroUser():
     # Segundo usuário - Amazon Q testando!

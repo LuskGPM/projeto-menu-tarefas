@@ -1,4 +1,4 @@
-from ..view.schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
+from ..api.schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
 from ..model.mysql_db import Usuario, UsuarioRepository
 from .configs import RedisControl as RedCache, HashSenha, COMMON_KEYS
 

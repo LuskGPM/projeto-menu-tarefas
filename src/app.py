@@ -1,4 +1,4 @@
-from backend.view.server import server
+from backend.api.server import server
 import uvicorn
 
 uvicorn.run(server)

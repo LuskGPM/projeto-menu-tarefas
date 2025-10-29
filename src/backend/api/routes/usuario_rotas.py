@@ -7,7 +7,7 @@ from ..dependencies import verificar_login
 rotas_user = APIRouter()
 
 @rotas_user.post('/user/register')
-async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict | HTTPException:
+async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict:
     try:
         user_control = UsuarioControler()
         verificar_nickname = await user_control.verificar_disponibilidade_nickname(user_dados.nickname)
@@ -19,7 +19,7 @@ async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict | HTTPException:
         raise HTTPException(400, f'Erro ao cadastrar dados: {e}')
     
 @rotas_user.post('/user/login')
-async def rota_user_login(user_dados: UsuarioLogin) -> dict | HTTPException:
+async def rota_user_login(user_dados: UsuarioLogin) -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.processar_login(user_dados)
@@ -28,7 +28,7 @@ async def rota_user_login(user_dados: UsuarioLogin) -> dict | HTTPException:
         raise HTTPException(401, f'Dados inválidos')
     
 @rotas_user.post('/user/logout', dependencies=[Depends(verificar_login)])
-async def rota_user_logout() -> dict | HTTPException:
+async def rota_user_logout() -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.encerrar_sessao()
@@ -37,7 +37,7 @@ async def rota_user_logout() -> dict | HTTPException:
         raise HTTPException(400, f'Sessão já está encerrada: {e}')
 
 @rotas_user.put('/user/update', dependencies=[Depends(verificar_login)])
-async def rota_user_update(user_data: UsuarioUpdate) -> dict | HTTPException:
+async def rota_user_update(user_data: UsuarioUpdate) -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.processar_update(user_data)
@@ -46,7 +46,7 @@ async def rota_user_update(user_data: UsuarioUpdate) -> dict | HTTPException:
         raise HTTPException(400, f'Erro ao atualizar dados: {e}')
     
 @rotas_user.get('/user/me', dependencies=[Depends(verificar_login)])
-async def rota_user_me(request: Request) -> JSONResponse | HTTPException:
+async def rota_user_me(request: Request) -> JSONResponse:
     user_control = UsuarioControler()
     dados_sessao = await user_control.obter_dados_sessao()
     if dados_sessao:
