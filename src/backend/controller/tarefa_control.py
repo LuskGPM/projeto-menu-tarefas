@@ -18,14 +18,8 @@ class TarefaControler(TarefaRepository):
         await self._insert(new_tarefa)
         
         # 2. Cache no Redis (dados básicos da tarefa)
-        tarefa_dict = {
-            'titulo': tarefa.titulo,
-            'descricao': tarefa.descricao,
-            'status': tarefa.status,
-            'prioridade': tarefa.prioridade,
-            'categoria_id': tarefa.categoria_id
-        }
-        cache = RedCache(COMMON_KEYS['TAREFAS_PENDENTES'], tarefa_dict)
+        tarefa_dict = new_tarefa.to_dict()
+        cache = RedCache(COMMON_KEYS['TAREFAS_PENDENTES'], {'tarefas': json.dumps(tarefa_dict)})
         await cache.processar_hash_cache()
         
         # 3. Invalidar caches de listagem
@@ -37,28 +31,23 @@ class TarefaControler(TarefaRepository):
         """Remove cache de listagem por status"""
         # Implementar limpeza de cache quando necessário
         pass
+
     
     async def receber_tarefa_por_status(self, status: Literal['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA']):
         # 1. Tenta buscar no cache primeiro
         cache_key = build_cache_key(ENTITIES['TAREFA'], TAREFA_STATUS[status])
-        print(f'🔍 Buscando cache com chave: {cache_key}')
         cache = RedCache(cache_key)
         cached_data = await cache.receber_hash_cache()
-        print(f'📦 Dados do cache: {cached_data}')
         
         if cached_data and 'tarefas' in cached_data:
-            print('<TarefaControler>: Pegou do Redis')
             return json.loads(cached_data['tarefas'])
-        print('<TarefaControler>: Pegou do Banco')
         
         # 2. Se não tem no cache, busca no MySQL
         tarefas = await self._select_by_status(TAREFA_STATUS[status])
         tarefas_dict = [tarefa.to_dict() for tarefa in tarefas]
         
         # 3. Salva no cache para próximas consultas
-        print(f'💾 Salvando no cache com chave: {cache_key}')
         cache_with_data = RedCache(cache_key, {'tarefas': json.dumps(tarefas_dict)})
         await cache_with_data.processar_hash_cache()
-        print('✅ Cache salvo!')
             
         return tarefas_dict

@@ -10,7 +10,6 @@ class TarefaCreate(BaseModel):
     categoria_id: int
     
 class TarefaResponse(BaseModel):
-    id: int
     titulo: str
     descricao: str
     status: str
