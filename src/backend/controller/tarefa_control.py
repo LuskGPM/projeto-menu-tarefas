@@ -1,12 +1,11 @@
 from ..model.mysql_db import Tarefa, TarefaRepository
 from ..view.schemas import TarefaCreate
-from .configs import RedisControl as RedCache, COMMON_KEYS
-from .configs.cache import build_cache_key, ENTITIES, TAREFA_STATUS
-from typing import Literal
+from .configs import RedisControl as RedCache, COMMON_KEYS, criar_key
+from typing import Literal, Sequence
 import json
 
 class TarefaControler(TarefaRepository):
-    async def processar_tarefa(self, tarefa: TarefaCreate):
+    async def processar_tarefa(self, tarefa: TarefaCreate) -> None:
         # 1. Criar e inserir no MySQL
         new_tarefa = Tarefa(
             titulo = tarefa.titulo,
@@ -16,38 +15,36 @@ class TarefaControler(TarefaRepository):
             categoria_id = tarefa.categoria_id
         )
         await self._insert(new_tarefa)
-        
-        # 2. Cache no Redis (dados básicos da tarefa)
-        tarefa_dict = new_tarefa.to_dict()
-        cache = RedCache(COMMON_KEYS['TAREFAS_PENDENTES'], {'tarefas': json.dumps(tarefa_dict)})
-        await cache.processar_hash_cache()
-        
-        # 3. Invalidar caches de listagem
-        #self.__invalidate_status_cache(dados.get('status'))
-        return tarefa_dict
-
     
-    def __invalidate_status_cache(self, status: str):
-        """Remove cache de listagem por status"""
-        # Implementar limpeza de cache quando necessário
-        pass
-
-    
-    async def receber_tarefa_por_status(self, status: Literal['PENDENTE', 'EM_ANDAMENTO', 'CONCLUIDA']):
-        # 1. Tenta buscar no cache primeiro
-        cache_key = build_cache_key(ENTITIES['TAREFA'], TAREFA_STATUS[status])
+        # 2. Cache no Redis
+        cache_key = criar_key(COMMON_KEYS['TASK'], tarefa.status)
         cache = RedCache(cache_key)
-        cached_data = await cache.receber_hash_cache()
+        # 3 Excluí cache antigo
+        await cache.excluir_cache()
+    
+    async def receber_tarefa_por_status(self, status: Literal['pendente', 'em_andamento', 'concluida']):
+        # 1. Tenta buscar no cache primeiro
+        cache_key = criar_key(COMMON_KEYS['TASK'], status)
+        cache = RedCache(cache_key)
+        cached_data = await cache.receber_cache()
         
-        if cached_data and 'tarefas' in cached_data:
-            return json.loads(cached_data['tarefas'])
+        if cached_data:
+            return cached_data
         
         # 2. Se não tem no cache, busca no MySQL
-        tarefas = await self._select_by_status(TAREFA_STATUS[status])
-        tarefas_dict = [tarefa.to_dict() for tarefa in tarefas]
+        tarefas: Sequence[Tarefa] = await self._select_by_status(status)
+        tarefas_dict = [t.to_dict() for t in tarefas]
         
         # 3. Salva no cache para próximas consultas
-        cache_with_data = RedCache(cache_key, {'tarefas': json.dumps(tarefas_dict)})
-        await cache_with_data.processar_hash_cache()
+        cache.adicionar_dados(tarefas_dict)
+        await cache.processar_cache()
             
         return tarefas_dict
+    
+    async def receber_tarefas(self):
+        pendentes = await self.receber_tarefa_por_status('pendente')
+        em_andamento = await self.receber_tarefa_por_status('em_andamento')
+        concluidas = await self.receber_tarefa_por_status('concluida')
+        
+        return pendentes + em_andamento + concluidas
+    

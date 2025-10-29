@@ -5,8 +5,8 @@ from .configs import RedisControl as RedCache, HashSenha, COMMON_KEYS
 class UsuarioControler(UsuarioRepository):
     async def processar_update(self, user: UsuarioUpdate) -> None:
         # Busca dados da sessão
-        sessao = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        dados_sessao = await sessao.receber_hash_cache()
+        sessao = RedCache(cache_key = COMMON_KEYS['USER'])
+        dados_sessao = await sessao.receber_cache()
         if not dados_sessao:
             raise ValueError('Usuário não está logado')
         
@@ -36,8 +36,8 @@ class UsuarioControler(UsuarioRepository):
         # Atualiza cache da sessão se nickname mudou
         if 'nickname' in update_data:
             dados_sessao['nickname'] = update_data['nickname']
-            cache_atualizado = RedCache(COMMON_KEYS['USUARIO_LOGADO'], dados_sessao)
-            await cache_atualizado.processar_hash_cache()
+            cache_atualizado = RedCache(cache_key = COMMON_KEYS['USER'], cache_data = dados_sessao)
+            await cache_atualizado.processar_cache()
     
     async def processar_cadastro(self, user: UsuarioCreate) -> None:
         # Hash da senha
@@ -69,36 +69,36 @@ class UsuarioControler(UsuarioRepository):
             'nome': user_banco.nome,
             'nickname': user_banco.nickname
         }
-        cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'], cache_data=user_session)
-        await cache.processar_hash_cache()
+        cache = RedCache(cache_key = COMMON_KEYS['USER'], cache_data = user_session)
+        await cache.processar_cache()
         
     async def encerrar_sessao(self) -> str:
-        cache = RedCache(cache_key=COMMON_KEYS['USUARIO_LOGADO'])
+        cache = RedCache(cache_key=COMMON_KEYS['USER'])
         delete_cache = await cache.excluir_cache()
         if delete_cache:
             return 'Sessão encerrada com sucesso'
         return 'Sessão já estava encerrada'
     
     async def esta_logado(self) -> bool:
-        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        sessao_ativa = await cache.receber_hash_cache()
+        cache = RedCache(COMMON_KEYS['USER'])
+        sessao_ativa = await cache.receber_cache()
         if sessao_ativa:
             await cache.renovar_cache()
             return True
         return False
     
     async def obter_nickname_sessao(self) -> str | None:
-        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        dados_sessao = await cache.receber_hash_cache()
+        cache = RedCache(COMMON_KEYS['USER'])
+        dados_sessao = await cache.receber_cache()
         if dados_sessao:
             return dados_sessao['nickname']
 
     async def obter_dados_sessao(self) -> dict | None:
-        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        return await cache.receber_hash_cache()
+        cache = RedCache(COMMON_KEYS['USER'])
+        return await cache.receber_cache()
     
     async def obter_nome_sessao(self) -> str | None:
-        cache = RedCache(COMMON_KEYS['USUARIO_LOGADO'])
-        dados_sessao = await cache.receber_hash_cache()
+        cache = RedCache(COMMON_KEYS['USER'])
+        dados_sessao = await cache.receber_cache()
         if dados_sessao:
             return dados_sessao['nome']

@@ -1,34 +1,28 @@
 from .connection import ConnectionRedis, TIMER_REDIS_EX
-from typing import Dict, Any
+from typing import Any
+import json
 
 class RepositoryRedis(ConnectionRedis):
     def __init__(self) -> None:
         super().__init__()
         self.__timer: int = TIMER_REDIS_EX['TIMER_30']
         
-    async def set_key(self, name_key: str, value_key: Any) -> None:
+    async def _set_json(self, chanel: str, data: dict) -> None:
         async with self as redis:
-            await redis.session.set(name_key, value_key)
+            await redis.session.set(chanel, json.dumps(data))
+            await redis.session.expire(chanel, self.__timer)
         
-    async def get_key(self, name_key: str) -> Any | None:
+    async def _get_json(self, key) -> Any | None:
         async with self as redis:
-            return await redis.session.get(name_key)
-        
-    async def set_hash_cache(self, name_hash: str, key_hash: str, value_hash: any) -> None:
-        async with self as redis:
-            await redis.session.hset(name_hash, key_hash, value_hash)
-            await redis.session.expire(name_hash, time=self.__timer)
-        
-    async def get_hash_all(self, name_hash) -> Dict | None:
-        async with self as redis:
-            return await redis.session.hgetall(name_hash)
-        
-    async def delete_cache(self, name_hash: str) -> bool:
-        async with self as redis:
-            result = await redis.session.delete(name_hash)
-            return result > 0 # Se houver um ou mais deletes, retorna True
+            result = await redis.session.get(key)
+            if result:
+                return json.loads(result)
 
-    async def expire(self, name_key) -> None:
+    async def _drop_key(self, key) -> bool:
         async with self as redis:
-            await redis.session.expire(name_key, time=self.__timer)
+            result = await redis.session.delete(key)
+            return result > 0
         
+    async def _expire_key(self, key) -> None:
+        async with self as redis:
+            await redis.session.expire(key, self.__timer)
