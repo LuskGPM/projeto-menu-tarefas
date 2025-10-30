@@ -3,6 +3,7 @@ from ..api.schemas import TarefaCreate
 from .configs import RedisControl as RedCache, COMMON_KEYS, criar_key
 from typing import Literal, Sequence
 import json
+import asyncio
 
 class TarefaControler(TarefaRepository):
     async def processar_tarefa(self, tarefa: TarefaCreate) -> None:
@@ -42,9 +43,12 @@ class TarefaControler(TarefaRepository):
         return tarefas_dict
     
     async def receber_tarefas(self):
-        pendentes = await self.receber_tarefa_por_status('pendente')
-        em_andamento = await self.receber_tarefa_por_status('em_andamento')
-        concluidas = await self.receber_tarefa_por_status('concluida')
+        # Executa as 3 consultas simultaneamente
+        pendentes, em_andamento, concluidas = await asyncio.gather(
+            self.receber_tarefa_por_status('pendente'),
+            self.receber_tarefa_por_status('em_andamento'),
+            self.receber_tarefa_por_status('concluida')
+        )
         
         return pendentes + em_andamento + concluidas
     
