@@ -3,3 +3,5 @@ __pycache__/
 sql/
 PROGRESS.md
 MELHORIAS_FUTURAS.md
+node_modules/
+package-lock.json
