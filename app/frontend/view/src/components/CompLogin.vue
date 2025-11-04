@@ -1,28 +1,40 @@
 <template>
     <main id="login-main">
-        <section id="login">
-            <div id="grid-login">
+        <section id="login-section">
+            <div id="login-grid">
                 <div id="logo">
                    <span class="material-symbols-outlined">
-                        lock
+                        login
                     </span> 
                 </div>
-                <div id="inputs">
-                    <input type="text" class="input" placeholder="Nickname"/>
-                    <input type="password" class="input" placeholder="Senha"/>
-                    <input type="button" value="Submit" class="input" id="submit"/>
+                <div id="login-inputs">
+                    <label for="loginNickname" class="label">Nickname</label>
+                    <input type="text" class="input" id="loginNickname"/>
+                    
+                    <label for="loginSenha" class="label">Senha</label>
+                    <input type="password" class="input" id="loginSenha"/>
+                    
+                    <input type="button" value="Login" class="input" id="submit"/>
                 </div>
-                <div id="cadastrar">
-                    <a href="#" class="link">Não tem conta? Cadastre-se</a>
+                <div id="login-cadastrar">
+                    <router-link to="/cadastro" class="link">
+                        Não tem conta? Cadastre-se
+                    </router-link>
                 </div>
             </div>
         </section>
+        <CompDireitosAutorais/>
     </main>
 </template>
 
 <script>
+    import CompDireitosAutorais from './CompDireitosAutorais.vue';
+
     export default {
-        name: 'CompLogin'
+        name: 'CompLogin',
+        components: {
+            CompDireitosAutorais
+        }
     }
 </script>
 

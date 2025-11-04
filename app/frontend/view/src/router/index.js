@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CompLogin from '../components/CompLogin.vue'
 import CompHeader from '../components/CompHeader.vue'
-import CompLerJson from '../components/CompLerJson.vue'
+import CompCadastro from '../components/CompCadastro.vue'
 
 console.log('CompLogin importado:', CompLogin)
 
@@ -21,9 +21,9 @@ const routes = [
         component: CompHeader
     },
     {
-        path: '/tarefa',
-        name: 'tarefa',
-        component: CompLerJson
+        path: '/cadastro',
+        name: 'cadastro',
+        component: CompCadastro
     }
 ]
 const router = createRouter({
