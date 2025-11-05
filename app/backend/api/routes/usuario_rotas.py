@@ -6,7 +6,7 @@ from ..dependencies import verificar_login
 
 rotas_user = APIRouter()
 
-@rotas_user.post('/user/register')
+@rotas_user.post('/api/user/register')
 async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict:
     try:
         user_control = UsuarioControler()
@@ -18,7 +18,7 @@ async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict:
     except Exception as e:
         raise HTTPException(400, f'Erro ao cadastrar dados: {e}')
     
-@rotas_user.post('/user/login')
+@rotas_user.post('/api/user/login')
 async def rota_user_login(user_dados: UsuarioLogin) -> dict:
     try:
         user_control = UsuarioControler()
@@ -27,7 +27,7 @@ async def rota_user_login(user_dados: UsuarioLogin) -> dict:
     except Exception as e:
         raise HTTPException(401, f'Dados inválidos')
     
-@rotas_user.post('/user/logout', dependencies=[Depends(verificar_login)])
+@rotas_user.post('/api/user/logout', dependencies=[Depends(verificar_login)])
 async def rota_user_logout() -> dict:
     try:
         user_control = UsuarioControler()
@@ -36,7 +36,7 @@ async def rota_user_logout() -> dict:
     except Exception as e:
         raise HTTPException(400, f'Sessão já está encerrada: {e}')
 
-@rotas_user.put('/user/update', dependencies=[Depends(verificar_login)])
+@rotas_user.put('/api/user/update', dependencies=[Depends(verificar_login)])
 async def rota_user_update(user_data: UsuarioUpdate) -> dict:
     try:
         user_control = UsuarioControler()
@@ -45,7 +45,7 @@ async def rota_user_update(user_data: UsuarioUpdate) -> dict:
     except Exception as e:
         raise HTTPException(400, f'Erro ao atualizar dados: {e}')
     
-@rotas_user.get('/user/me', dependencies=[Depends(verificar_login)])
+@rotas_user.get('/api/user/me', dependencies=[Depends(verificar_login)])
 async def rota_user_me(request: Request) -> JSONResponse:
     user_control = UsuarioControler()
     dados_sessao = await user_control.obter_dados_sessao()

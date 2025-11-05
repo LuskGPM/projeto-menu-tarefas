@@ -67,7 +67,7 @@
                 width: 100%;
                 height: 40px;
                 box-sizing: border-box;
-                border: 1px solid var(--azul-escuro);
+                border: 1px solid var(--cinza-claro);
                 border-radius: 10px;
                 outline: none;
                 background-color: var(--branco-painel-texto);
@@ -86,7 +86,6 @@
             .input:last-child {
                 margin-top: 5px;
                 margin-bottom: 0;
-                text-indent: 0;
                 background-color: var(--azul-claro);
                 color: black;
                 font-weight: 600;

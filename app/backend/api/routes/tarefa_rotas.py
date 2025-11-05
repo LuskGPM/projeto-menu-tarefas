@@ -6,7 +6,7 @@ from ..dependencies import verificar_login
 
 rotas_tarefas = APIRouter()
 
-@rotas_tarefas.post('/tarefa/register', dependencies=[Depends(verificar_login)])
+@rotas_tarefas.post('/api/tarefa/register', dependencies=[Depends(verificar_login)])
 async def rota_tarefa_cadastro(tarefa: TarefaCreate) -> dict:
     try:
         tarefa_control = TarefaControler()
@@ -15,7 +15,7 @@ async def rota_tarefa_cadastro(tarefa: TarefaCreate) -> dict:
     except Exception as e:
         raise HTTPException(400, f'Erro ao cadastrar tarefa: {e}')
     
-@rotas_tarefas.get('/tarefa')
+@rotas_tarefas.get('/api/tarefa')
 async def rota_tarefa_get_all(request: Request):
     try:
         tarefa_control = TarefaControler()
