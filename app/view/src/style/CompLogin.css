@@ -96,8 +96,8 @@
                 background-color: var(--azul-escuro);
                 color: white;
             }
-            .input:last-child:focus {
-                background-color: var(--azul-escuro);
+            .input:last-child:active {
+                background-color: var(--verde-ciano);
                 color: white;
             }
         }

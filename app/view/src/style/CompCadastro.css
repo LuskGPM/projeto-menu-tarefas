@@ -99,8 +99,8 @@
                 padding: 0;
             }
 
-            .input:last-child:focus {
-                background-color: var(--azul-escuro);
+            .input:last-child:active {
+                background-color: var(--verde-ciano);
                 color: var(--branco-painel-texto);
             }
         }

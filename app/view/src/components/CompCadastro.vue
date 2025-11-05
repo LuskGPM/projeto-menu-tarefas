@@ -19,7 +19,7 @@
 
                     <label for="cadConfirmSenha" class="label">Confirme a senha</label>
                     <input type="password" id="cadConfirmSenha" class="input" v-model="confsenha" @input="validarSenha" ref="confirmSenha" required/>
-                    <p ref="alertsenha" class="alertsenha"></p>
+                    <p ref="alertcad"></p>
 
                     <input type="submit" id="cadButton" value="Cadastrar" class="input" @click="cadastrar"/>
                 </div>
@@ -64,21 +64,23 @@
                 }
                 try {
                     const response = await axios.post('http://127.0.0.1:8000/api/user/register', dados)
-                    alert(response.data.message)
+                    this.$refs.alertcad.innerText = response.data.message
+                    this.$refs.alertcad.style.color = 'green'
                     this.$router.push('/login')
-                } catch (error){
-                    alert(error.response.data.detail)
+                } catch (error) {
+                    this.$refs.alertcad.innerText = error.response.data.detail
+                    this.$refs.alertcad.style.color = 'red'
                 }
             },
             validarSenha() {
                 if (this.senha !== this.confsenha) {
                     this.$refs.confirmSenha.style.borderColor = 'red'
-                    this.$refs.alertsenha.innerText = 'Senhas não coincidem'
-                    this.$refs.alertsenha.style.color = 'red'
+                    this.$refs.alertcad.innerText = 'Senhas não coincidem'
+                    this.$refs.alertcad.style.color = 'red'
                 } else {
                     this.$refs.confirmSenha.style.borderColor = 'green'
-                    this.$refs.alertsenha.innerText = 'Senhas iguais'
-                    this.$refs.alertsenha.style.color = 'green'
+                    this.$refs.alertcad.innerText = 'Senhas iguais'
+                    this.$refs.alertcad.style.color = 'green'
                 }
             }
         }

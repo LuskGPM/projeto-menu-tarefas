@@ -8,6 +8,8 @@
                     </span> 
                 </div>
                 <div id="login-inputs">
+                    <p ref="alertLogin"></p>
+
                     <label for="loginNickname" class="label">Nickname</label>
                     <input type="text" class="input" id="loginNickname" v-model="nickname"/>
                     
@@ -29,6 +31,7 @@
 
 <script>
     import axios from 'axios';
+    import { useAuth } from '../composables/useAuth';
     import CompDireitosAutorais from './CompDireitosAutorais.vue';
 
     export default {
@@ -37,7 +40,10 @@
             CompDireitosAutorais
         },
         async created() {
-            await this.verificarSessao()
+            const { verificarSessao } = useAuth()
+            if (await verificarSessao()) {
+                this.$router.push('/tela-principal')
+            }
         },
         data() {
             return {
@@ -46,15 +52,6 @@
             }
         },
         methods: {
-            async verificarSessao() {
-                try {
-                    const response = await axios('http://127.0.0.1:8000/api/user/me')
-                    const userId = response.data.id
-                    this.$router.push(`/tarefa/id=${userId}`)
-                } catch (error) {
-                    console.log('Nenhuma sessão ativa no redis')
-                }
-            },
             async login() {
                 const dados = {
                     nickname: this.nickname,
@@ -62,10 +59,12 @@
                 }
                 try {
                     const response = await axios.post('http://127.0.0.1:8000/api/user/login', dados)
-                    alert(response.data.message)
-                    this.$router.push('/tarefa')
+                    this.$refs.alertLogin.innerText = response.data.message
+                    this.$refs.alertLogin.style.color = 'green'
+                    this.$router.push('/tela-principal')
                 } catch (error) {
-                    alert(error.response.data.detail)
+                    this.$refs.alertLogin.innerText = error.response.data.detail
+                    this.$refs.alertLogin.style.color = 'red'
                 }
             }
         }

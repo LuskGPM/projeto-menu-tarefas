@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CompLogin from '../components/CompLogin.vue'
-import CompHeader from '../components/CompHeader.vue'
+import CompTelaPrincipal from '../components/CompTelaPrincipal.vue'
 import CompCadastro from '../components/CompCadastro.vue'
 
 console.log('CompLogin importado:', CompLogin)
@@ -16,9 +16,9 @@ const routes = [
         component: CompLogin
     },
     {
-        path: '/header',
-        name: 'header',
-        component: CompHeader
+        path: '/tela-principal',
+        name: 'tela',
+        component: CompTelaPrincipal
     },
     {
         path: '/cadastro',

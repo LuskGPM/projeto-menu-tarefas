@@ -53,6 +53,14 @@ async def rota_user_me(request: Request) -> JSONResponse:
         return JSONResponse(dados_sessao, 200)
     raise HTTPException(500, 'Erro ao fornecer dados do usuario')
 
+@rotas_user.get('/api/user/verificar-sessao', dependencies=[Depends(verificar_login)])
+async def rota_user_verificar_sessao(request: Request) -> JSONResponse:
+    return JSONResponse(
+        {
+            'message': 'logado'
+        }, 200
+    )
+
 @rotas_user.get('/')
 async def hello_world(request: Request) -> JSONResponse:
     return JSONResponse(
