@@ -1,6 +1,8 @@
 redis>=7.0.0
-fastapi
-uvicorn
-sqlalchemy
-PyMySQL
-bcrypt
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.0
+PyMySQL>=1.1.0
+bcrypt>=4.0.0
+pydantic>=2.0.0
+aiomysql>=0.2.0

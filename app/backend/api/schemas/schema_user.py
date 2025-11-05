@@ -9,11 +9,6 @@ class UsuarioCreate(BaseModel):
     @classmethod
     def formatar_nome(cls, nome: str) -> str:
         return nome.strip().capitalize()
-
-class UsuarioResponse(BaseModel):
-    id: int
-    nome: str
-    nickname: str
     
 class UsuarioLogin(BaseModel):
     nickname: str = Field(min_length=3)

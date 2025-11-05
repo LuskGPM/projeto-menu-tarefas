@@ -1,6 +1,7 @@
 from ..api.schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
 from ..model.mysql_db import Usuario, UsuarioRepository
 from .configs import RedisControl as RedCache, HashSenha, COMMON_KEYS
+from fastapi import Request
 
 class UsuarioControler(UsuarioRepository):
     async def processar_update(self, user: UsuarioUpdate) -> None:
@@ -51,14 +52,7 @@ class UsuarioControler(UsuarioRepository):
         
         # Insere novo usuário
         await self._insert(new_user)
-    
-    async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
-        # Verificar se o nickname já existe
-        nickname_no_banco = await self._select_by_nickname(nickname)
-        if nickname_no_banco: # Se o nickname for encontrado, retorna True
-            return True
-        return False
-    
+        
     async def processar_login(self, user: UsuarioLogin) -> None | ValueError:
         user_banco = await self._select_by_nickname(user.nickname)
         senha_user = user_banco.senha_hash
@@ -71,7 +65,14 @@ class UsuarioControler(UsuarioRepository):
         }
         cache = RedCache(cache_key = COMMON_KEYS['USER'], cache_data = user_session)
         await cache.processar_cache()
-        
+    
+    async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
+        # Verificar se o nickname já existe
+        nickname_no_banco = await self._select_by_nickname(nickname)
+        if nickname_no_banco: # Se o nickname for encontrado, retorna True
+            return True
+        return False
+    
     async def encerrar_sessao(self) -> str:
         cache = RedCache(cache_key=COMMON_KEYS['USER'])
         delete_cache = await cache.excluir_cache()
@@ -86,19 +87,8 @@ class UsuarioControler(UsuarioRepository):
             await cache.renovar_cache()
             return True
         return False
-    
-    async def obter_nickname_sessao(self) -> str | None:
-        cache = RedCache(COMMON_KEYS['USER'])
-        dados_sessao = await cache.receber_cache()
-        if dados_sessao:
-            return dados_sessao['nickname']
 
     async def obter_dados_sessao(self) -> dict | None:
         cache = RedCache(COMMON_KEYS['USER'])
         return await cache.receber_cache()
-    
-    async def obter_nome_sessao(self) -> str | None:
-        cache = RedCache(COMMON_KEYS['USER'])
-        dados_sessao = await cache.receber_cache()
-        if dados_sessao:
-            return dados_sessao['nome']
+        

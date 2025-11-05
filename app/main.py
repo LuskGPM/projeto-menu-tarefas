@@ -23,7 +23,7 @@ async def cadastroTarefa():
         categoria_id=3
     )
     controler = TarefaControler()
-    await controler.processar_tarefa(tarefa)
+    await controler.processar_tarefa_cadastro(tarefa)
     print(f'🚀 Tarefa: {tarefa.titulo} cadastrada com sucesso!')
     print('💪 Sistema async funcionando perfeitamente!')
     
