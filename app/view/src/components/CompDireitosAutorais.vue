@@ -1,6 +1,7 @@
 <template>
     <p id="direitos-autorais">
-        Imagem de fundo: <a href="https://pt.vecteezy.com/?utm_source=vecteezy-download&utm_medium=license-info-pdf&utm_campaign=license-info-document">Vecteezy.com</a> 
+        Imagem de fundo: <a
+            href="https://pt.vecteezy.com/?utm_source=vecteezy-download&utm_medium=license-info-pdf&utm_campaign=license-info-document">Vecteezy.com</a>
     </p>
 </template>
 

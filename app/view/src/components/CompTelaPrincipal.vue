@@ -1,28 +1,28 @@
 <template>
-    <CompHeader/>
+    <CompHeader />
 </template>
 
 <script>
-    import CompHeader from './CompHeader.vue';
-    //import axios from 'axios';
-    import { useAuth } from '../composables/useAuth';
+import CompHeader from './CompHeader.vue';
+import { useSessionMonitor } from '../composables/useSessionMonitor'
 
-    export default {
-        name: 'CompTelaPrincipal',
-        components: {
-            CompHeader
-        },
-        async created() {
-            const { verificarSessao } = useAuth()
-            if (!await verificarSessao()) {
-                this.$router.push('/login')
-            }
-        },
-        methods: {
+export default {
+    name: 'CompTelaPrincipal',
+    components: {
+        CompHeader
+    },
+    data() {
+        return {
+            intervalId: null
         }
+    },
+    async created() {
+        const { iniciarMonitoramento } = useSessionMonitor()
+        iniciarMonitoramento()
+    },
+    methods: {
     }
+}
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -1,33 +1,62 @@
 <template>
     <header>
-        <nav>
+        <nav class="navbar">
             <div id="header-sanduiche">
-                <span class="material-symbols-outlined" @click="toggle_menu">
+                <span class="material-symbols-outlined span" @click="toggle_menu">
                     menu
                 </span>
-            <div class="sidebar" :class="{'sidebar-aberto': true}">
-                </div>
-                <div id="header-perfil">
-                    <span class="material-symbols-outlined">
-                        logout
+            </div>
+
+            <aside v-if="mostrarSideBar" class="overlay" @click="fechar_menu"></aside>
+
+            <aside class="sidebar" :class="{ 'sidebar-aberto': mostrarSideBar }">
+                <div id="header-close" @click="fechar_menu" class="menu-items">
+                    <span class="material-symbols-outlined span">
+                        close
                     </span>
                 </div>
-                <div id="header-logout">
-                    <span class="material-symbols-outlined">
+                <div id="header-perfil" class="menu-items">
+                    <span class="material-symbols-outlined span">
                         account_circle
                     </span>
+                    Perfil
                 </div>
-            </div>
+                <div id="header-logout" class="menu-items" @click="logout">
+                    <span class="material-symbols-outlined span">
+                        logout
+                    </span>
+                    Sair
+                </div>
+            </aside>
         </nav>
     </header>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'CompHeader',
+    data() {
+        return {
+            mostrarSideBar: false
+        }
+    },
     methods: {
         toggle_menu() {
-
+            this.mostrarSideBar = !this.mostrarSideBar
+        },
+        fechar_menu() {
+            this.mostrarSideBar = false
+        },
+        async logout() {
+            try {
+                await axios('http://127.0.0.1:8000/api/user/logout')
+                console.log('Sessão encerrada')
+                this.$router.push('/login')
+            } catch (error) {
+                console.log('erro:', error)
+            }
         }
     }
 }
@@ -36,5 +65,58 @@ export default {
 <style>
 @import url('../assets/static.css');
 
+.navbar {
+    background-color: var(--azul-claro);
+    padding: 20px;
+}
 
+.span {
+    font-size: 3em !important;
+    cursor: pointer;
+    color: var(--azul-escuro);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    /* escondido inicialmente */
+    width: 300px;
+    height: 100vh;
+    background: white;
+    z-index: 999;
+    transition: left 0.3s ease-out;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+    .menu-items {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .menu-items:first-child {
+        align-items: flex-start;
+    }
+
+    #header-logout .span {
+        color: var(--vermelho-claro);
+    }
+}
+
+.sidebar-aberto {
+    left: 0;
+    /* aparece quando ativo */
+}
 </style>

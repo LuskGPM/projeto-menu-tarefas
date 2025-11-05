@@ -1,6 +1,6 @@
 from ..entities import Usuario
 from .mysql_repo import MySQLRepository
-from sqlalchemy import select, and_
+from sqlalchemy import select, exists
 
 class UsuarioRepository(MySQLRepository):
     
@@ -12,6 +12,7 @@ class UsuarioRepository(MySQLRepository):
         
     async def _nickname_exists(self, nickname) -> bool:
         async with self as db:
-            statement = select(Usuario).where(Usuario.nickname == nickname)
+            statement = select(exists().where(Usuario.nickname == nickname))
             result = await db.session_async.execute(statement)
-            return result.scalar_one_or_none() is not None
+            return result.scalar()
+        

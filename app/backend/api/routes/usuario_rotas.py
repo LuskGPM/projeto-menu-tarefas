@@ -27,8 +27,8 @@ async def rota_user_login(user_dados: UsuarioLogin) -> dict:
     except Exception as e:
         raise HTTPException(401, f'Dados inválidos')
     
-@rotas_user.post('/api/user/logout', dependencies=[Depends(verificar_login)])
-async def rota_user_logout() -> dict:
+@rotas_user.get('/api/user/logout')
+async def rota_user_logout(request: Request) -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.encerrar_sessao()

@@ -55,9 +55,8 @@ class UsuarioControler(UsuarioRepository):
         
     async def processar_login(self, user: UsuarioLogin) -> None | ValueError:
         user_banco = await self._select_by_nickname(user.nickname)
-        senha_user = user_banco.senha_hash
-        if not HashSenha(user.senha_login, senha_user).is_equal():
-            raise ValueError('<ControlerUser>: Senha fornecida pelo front não condiz com a senha do banco')
+        if not HashSenha(user.senha_login, user_banco.senha_hash).is_equal():
+            raise ValueError('Senha incorreta')
         user_session = {
             'id': user_banco.id,
             'nome': user_banco.nome,
@@ -68,10 +67,7 @@ class UsuarioControler(UsuarioRepository):
     
     async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
         # Verificar se o nickname já existe
-        nickname_no_banco = await self._select_by_nickname(nickname)
-        if nickname_no_banco: # Se o nickname for encontrado, retorna True
-            return True
-        return False
+        return await self._nickname_exists(nickname)
     
     async def encerrar_sessao(self) -> str:
         cache = RedCache(cache_key=COMMON_KEYS['USER'])
@@ -84,9 +80,14 @@ class UsuarioControler(UsuarioRepository):
         cache = RedCache(COMMON_KEYS['USER'])
         sessao_ativa = await cache.receber_cache()
         if sessao_ativa:
-            await cache.renovar_cache()
+            await cache.renovar_cache()  # Renova quando usado em rotas ativas
             return True
         return False
+    
+    async def verificar_sessao_sem_renovar(self) -> bool:
+        cache = RedCache(COMMON_KEYS['USER'])
+        sessao_ativa = await cache.receber_cache()
+        return sessao_ativa is not None
 
     async def obter_dados_sessao(self) -> dict | None:
         cache = RedCache(COMMON_KEYS['USER'])
