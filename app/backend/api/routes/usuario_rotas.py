@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from ...controller import UsuarioControler
 from ..schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
@@ -28,7 +28,7 @@ async def rota_user_login(user_dados: UsuarioLogin) -> dict:
         raise HTTPException(401, f'Dados inválidos')
     
 @rotas_user.get('/api/user/logout')
-async def rota_user_logout(request: Request) -> dict:
+async def rota_user_logout() -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.encerrar_sessao()
@@ -41,28 +41,40 @@ async def rota_user_update(user_data: UsuarioUpdate) -> dict:
     try:
         user_control = UsuarioControler()
         await user_control.processar_update(user_data)
+        await user_control.esta_logado()
         return {'message': 'Dados atualizados com sucesso'}
     except Exception as e:
         raise HTTPException(400, f'Erro ao atualizar dados: {e}')
     
 @rotas_user.get('/api/user/me', dependencies=[Depends(verificar_login)])
-async def rota_user_me(request: Request) -> JSONResponse:
+async def rota_user_me() -> JSONResponse:
     user_control = UsuarioControler()
     dados_sessao = await user_control.obter_dados_sessao()
     if dados_sessao:
+        await user_control.esta_logado()
         return JSONResponse(dados_sessao, 200)
     raise HTTPException(500, 'Erro ao fornecer dados do usuario')
 
 @rotas_user.get('/api/user/verificar-sessao', dependencies=[Depends(verificar_login)])
-async def rota_user_verificar_sessao(request: Request) -> JSONResponse:
+async def rota_user_verificar_sessao() -> JSONResponse:
     return JSONResponse(
         {
             'message': 'logado'
         }, 200
     )
+    
+@rotas_user.delete('/api/user/delete', dependencies=[Depends(verificar_login)])
+async def rota_user_delete():
+    try:
+        user_control = UsuarioControler()
+        dados_sessao = await user_control.obter_dados_sessao()
+        await user_control.processar_delete(dados_sessao['id'])
+        return {'message': 'Usuário deletado com sucesso'}
+    except Exception as e:
+        raise HTTPException(400, f'Erro ao deletar usuário: {e}')
 
 @rotas_user.get('/')
-async def hello_world(request: Request) -> JSONResponse:
+async def hello_world() -> JSONResponse:
     return JSONResponse(
         {
             'Hello': 'World'

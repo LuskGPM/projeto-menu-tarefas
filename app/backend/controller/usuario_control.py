@@ -1,7 +1,6 @@
 from ..api.schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
 from ..model.mysql_db import Usuario, UsuarioRepository
 from .configs import RedisControl as RedCache, HashSenha, COMMON_KEYS
-from fastapi import Request
 
 class UsuarioControler(UsuarioRepository):
     async def processar_update(self, user: UsuarioUpdate) -> None:
@@ -64,6 +63,10 @@ class UsuarioControler(UsuarioRepository):
         }
         cache = RedCache(cache_key = COMMON_KEYS['USER'], cache_data = user_session)
         await cache.processar_cache()
+        
+    async def processar_delete(self, user_id: int) -> None:
+        await self._delete(Usuario, user_id)
+        await self.encerrar_sessao()
     
     async def verificar_disponibilidade_nickname(self, nickname: str) -> bool:
         # Verificar se o nickname já existe
