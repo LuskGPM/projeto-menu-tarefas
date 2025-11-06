@@ -1,15 +1,18 @@
 <template>
-    <CompHeader />
+    <CompHeader/>
+    <CompBody/>
 </template>
 
 <script>
 import CompHeader from './CompHeader.vue';
+import CompBody from './CompBody.vue';
 import { useSessionMonitor } from '../composables/useSessionMonitor'
 
 export default {
     name: 'CompTelaPrincipal',
     components: {
-        CompHeader
+        CompHeader,
+        CompBody
     },
     data() {
         return {
@@ -25,4 +28,5 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+</style>

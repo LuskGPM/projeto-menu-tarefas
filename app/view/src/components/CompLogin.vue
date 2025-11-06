@@ -1,7 +1,7 @@
 <template>
     <main id="login-main">
         <section id="login-section">
-            <div id="login-grid">
+            <form id="login-grid">
                 <div id="logo">
                     <span class="material-symbols-outlined">
                         login
@@ -23,7 +23,7 @@
                         Não tem conta? Cadastre-se
                     </router-link>
                 </div>
-            </div>
+            </form>
         </section>
         <CompDireitosAutorais />
     </main>

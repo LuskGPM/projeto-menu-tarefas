@@ -1,7 +1,7 @@
 <template>
     <main id="cad-main">
         <section id="cad-section">
-            <div id="cad-grid">
+            <form id="cad-grid">
                 <div id="logo">
                     <span class="material-symbols-outlined">
                         app_registration
@@ -29,7 +29,7 @@
                         Possuí uma conta?
                     </router-link>
                 </div>
-            </div>
+            </form>
         </section>
         <CompDireitosAutorais />
     </main>

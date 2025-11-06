@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Literal
-from datetime import datetime
 
 class TarefaCreate(BaseModel):
     titulo: str = Field(min_length=3, max_length=60)
