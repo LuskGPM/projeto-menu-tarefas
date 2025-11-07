@@ -22,7 +22,7 @@
                         ref="confirmSenha" required />
                     <p ref="alertcad"></p>
 
-                    <input type="submit" id="cadButton" value="Cadastrar" class="input" @click="cadastrar" />
+                    <input type="submit" id="cadButton" value="Cadastrar" class="input" @click.prevent="cadastrar" />
                 </div>
                 <div id="cad-login">
                     <router-link to="/login" class="link">

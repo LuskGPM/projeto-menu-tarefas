@@ -2,11 +2,10 @@ from ..model.mysql_db import Tarefa, TarefaRepository
 from ..api.schemas import TarefaCreate, TarefaUpdate
 from .configs import RedisControl as RedCache, COMMON_KEYS, criar_key
 from typing import Literal, Sequence
-import json
 import asyncio
 
 class TarefaControler(TarefaRepository):
-    async def processar_tarefa_cadastro(self, tarefa: TarefaCreate) -> None:
+    async def processar_tarefa_cadastro(self, tarefa: TarefaCreate, usuario_id: int) -> None:
         # 1. Criar e inserir no MySQL
         new_tarefa = Tarefa(
             titulo = tarefa.titulo,
@@ -14,12 +13,11 @@ class TarefaControler(TarefaRepository):
             status = tarefa.status,
             prioridade = tarefa.prioridade,
             categoria_id = tarefa.categoria_id,
-            usuario_id = tarefa.usuario_id
+            usuario_id = usuario_id
         )
         await self._insert(new_tarefa)
-    
         # 2. Cache no Redis
-        cache_key = criar_key(COMMON_KEYS['TASK'], f'{tarefa.status}_{tarefa.usuario_id}')
+        cache_key = criar_key(COMMON_KEYS['TASK'], f'{tarefa.status}_{usuario_id}')
         cache = RedCache(cache_key)
         # 3 Excluí cache antigo
         await cache.excluir_cache()

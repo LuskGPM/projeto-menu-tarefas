@@ -16,7 +16,7 @@
                     <label for="loginSenha" class="label">Senha</label>
                     <input type="password" class="input" id="loginSenha" v-model="senha" />
 
-                    <input type="submit" value="Login" class="input" id="submit" @click="login" />
+                    <input type="submit" value="Login" class="input" id="submit" @click.prevent="login"/>
                 </div>
                 <div id="login-cadastrar">
                     <router-link to="/cadastro" class="link">
@@ -58,12 +58,10 @@ export default {
                 senha_login: this.senha
             }
             try {
-                const response = await axios.post('http://127.0.0.1:8000/api/user/login', dados)
-                this.$refs.alertLogin.innerText = response.data.message
-                this.$refs.alertLogin.style.color = 'green'
+                await axios.post('http://127.0.0.1:8000/api/user/login', dados)
                 this.$router.push('/tela-principal')
-            } catch (error) {
-                this.$refs.alertLogin.innerText = error.response.data.detail
+            } catch {
+                this.$refs.alertLogin.innerText = 'Usuário ou senha incorretos'
                 this.$refs.alertLogin.style.color = 'red'
             }
         }

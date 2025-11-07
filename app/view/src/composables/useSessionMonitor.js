@@ -5,27 +5,20 @@ import router from '../router'
 
 export function useSessionMonitor() {
     const intervalId = ref(null)
-    
     const iniciarMonitoramento = () => {
-        intervalId.value = setInterval(async () => {
-            try {
-                await axios('http://127.0.0.1:8000/api/user/verificar-sessao')
-                // Status 200 = sessão ativa, não faz nada
-            } catch (error) {
-                // Qualquer erro (401, 403, etc.) = redireciona
-                await axios('http://127.0.0.1:8000/api/user/logout')
-                router.push('/login')
-            }
-        }, 300000) // 5 minutos
-    }
-    
+    intervalId.value = setInterval(async () => {
+        try {
+            await axios('http://127.0.0.1:8000/api/user/verificar-sessao')
+        } catch (error) {
+            router.push('/login')
+        }
+    }, 300000)
+}
     const pararMonitoramento = () => {
         if (intervalId.value) {
             clearInterval(intervalId.value)
         }
     }
-    
     onUnmounted(pararMonitoramento)
-    
     return { iniciarMonitoramento, pararMonitoramento }
 }

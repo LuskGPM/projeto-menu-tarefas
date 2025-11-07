@@ -54,8 +54,12 @@ class UsuarioControler(UsuarioRepository):
         
     async def processar_login(self, user: UsuarioLogin) -> None | ValueError:
         user_banco = await self._select_by_nickname(user.nickname)
+        
+        if not user_banco:
+            raise ValueError('Senha ou Usuário incorretos')
         if not HashSenha(user.senha_login, user_banco.senha_hash).is_equal():
-            raise ValueError('Senha incorreta')
+            raise ValueError('Senha ou Usuario incorretos')
+        
         user_session = {
             'id': user_banco.id,
             'nome': user_banco.nome,

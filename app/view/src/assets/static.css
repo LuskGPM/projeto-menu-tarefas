@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+@import url('~bootstrap/dist/css/bootstrap.min.css');
 
 :root {
     --azul-claro: #a5d7ee;
