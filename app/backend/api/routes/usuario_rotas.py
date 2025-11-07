@@ -25,7 +25,7 @@ async def rota_user_login(user_dados: UsuarioLogin) -> dict:
         await user_control.processar_login(user_dados)
         return {'message': 'sessão iniciada'}
     except Exception as e:
-        raise HTTPException(401, f'Dados inválidos')
+        raise HTTPException(400, f'Dados inválidos: {e}')
     
 @rotas_user.get('/api/user/logout')
 async def rota_user_logout() -> dict:
