@@ -22,7 +22,8 @@
                 </div>
 
                 <div class="form-floating">
-                    <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select" v-model="t_prioridade">
+                    <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select"
+                        v-model="t_prioridade">
                         <option value="alta">Alta</option>
                         <option value="media">Media</option>
                         <option value="baixa">Baixa</option>
@@ -31,7 +32,8 @@
                 </div>
 
                 <div class="form-floating">
-                    <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select" v-model.number="t_categoria">
+                    <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select"
+                        v-model.number="t_categoria">
                         <option value="1">Trabalho</option>
                         <option value="2">Pessoal</option>
                         <option value="3">Estudos</option>
@@ -44,7 +46,8 @@
 
                 <p ref="inserirTarefaAlert"></p>
 
-                <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa" :disabled="processandoInsert">
+                <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa"
+                    :disabled="processandoInsert">
             </form>
         </section>
         <section id="tarefas"> </section>
@@ -80,23 +83,22 @@ export default {
             }
 
             try {
-
                 const response = await axios.post('http://127.0.0.1:8000/api/tarefa/register', dados)
                 this.$refs.inserirTarefaAlert.style.color = 'green'
                 this.$refs.inserirTarefaAlert.innerText = response.data.message
                 this.t_titulo = ''
                 this.t_desc = ''
-            } catch (error){
+            } catch (error) {
                 console.log(error)
                 this.$refs.inserirTarefaAlert.style.color = 'red'
                 this.$refs.inserirTarefaAlert.innerText = 'Preencha todos os campos corretamente'
             } finally {
                 this.processandoInsert = false
                 setTimeout(() => {
-                if (this.$refs.inserirTarefaAlert) {
-                    this.$refs.inserirTarefaAlert.innerText = ''
-                }
-            }, 5000)
+                    if (this.$refs.inserirTarefaAlert) {
+                        this.$refs.inserirTarefaAlert.innerText = ''
+                    }
+                }, 5000)
             }
         }
     }
@@ -110,8 +112,10 @@ export default {
     flex-direction: column;
     flex-wrap: nowrap;
     gap: 10px;
-    
-    input, textarea, select {
+
+    input,
+    textarea,
+    select {
         border: 1px solid var(--verde-ciano);
     }
 }

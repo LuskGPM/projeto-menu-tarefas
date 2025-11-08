@@ -1,7 +1,8 @@
 <template>
+
     <body>
-        <CompHeader class="header-pp"/>
-        <CompBody class="body-pp"/>
+        <CompHeader class="header-pp" />
+        <CompBody class="body-pp" />
     </body>
 </template>
 
@@ -31,7 +32,7 @@ export default {
 <style src="../assets/static.css"></style>
 
 <style>
-body{
+body {
     width: 100vw;
     height: 100vh;
     display: grid;
