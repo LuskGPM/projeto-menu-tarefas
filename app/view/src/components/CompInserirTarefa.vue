@@ -1,40 +1,50 @@
 <template>
     <main>
         <section id="inserirTarefa">
-            <form>
-                <label for="tarefaTitulo">Titulo</label>
-                <input type="text" id="tarefaTitulo" v-model="t_titulo">
+            <form class="formulario-insert">
+                <div class="form-floating">
+                    <input type="text" id="tarefaTitulo" v-model="t_titulo" class="form-control">
+                    <label for="tarefaTitulo">Titulo</label>
+                </div>
 
-                <label for="tarefaDesc">Descrição</label>
-                <textarea type="text" id="tarefaDesc" v-model="t_desc"></textarea>
+                <div class="form-floating">
+                    <textarea type="text" id="tarefaDesc" v-model="t_desc" class="form-control"></textarea>
+                    <label for="tarefaDesc">Descrição</label>
+                </div>
 
-                <label for="tarefaStatus">Status</label>
-                <select aria-label="Selecione o status" id="tarefaStatus" class="form-select" v-model="t_status">
-                    <option value="pendente">Pendente</option>
-                    <option value="em_andamento">Em andamento</option>
-                    <option value="concluida">Concluído</option>
-                </select>
+                <div class="form-floating">
+                    <select aria-label="Selecione o status" id="tarefaStatus" class="form-select" v-model="t_status">
+                        <option value="pendente">Pendente</option>
+                        <option value="em_andamento">Em andamento</option>
+                        <option value="concluida">Concluído</option>
+                    </select>
+                    <label for="tarefaStatus">Status</label>
+                </div>
 
-                <label for="tarefaPrioridade">Prioridade</label>
-                <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select" v-model="t_prioridade">
-                    <option value="alta">Alta</option>
-                    <option value="media">Media</option>
-                    <option value="baixa">Baixa</option>
-                </select>
+                <div class="form-floating">
+                    <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select" v-model="t_prioridade">
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                    <label for="tarefaPrioridade">Prioridade</label>
+                </div>
 
-                <label for="tarefaCategoria">Categoria</label>
-                <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select" v-model.number="t_categoria">
-                    <option value="1">Trabalho</option>
-                    <option value="2">Pessoal</option>
-                    <option value="3">Estudos</option>
-                    <option value="4">Urgente</option>
-                    <option value="5">Casa</option>
-                    <option value="6">Saúde</option>
-                </select>
+                <div class="form-floating">
+                    <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select" v-model.number="t_categoria">
+                        <option value="1">Trabalho</option>
+                        <option value="2">Pessoal</option>
+                        <option value="3">Estudos</option>
+                        <option value="4">Urgente</option>
+                        <option value="5">Casa</option>
+                        <option value="6">Saúde</option>
+                    </select>
+                    <label for="tarefaCategoria">Categoria</label>
+                </div>
 
                 <p ref="inserirTarefaAlert"></p>
 
-                <input type="submit" value="Inserir" @click.prevent="inserir_tarefa">
+                <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa" :disabled="processandoInsert">
             </form>
         </section>
         <section id="tarefas"> </section>
@@ -54,11 +64,13 @@ export default {
             t_desc: '',
             t_status: 'pendente',
             t_prioridade: 'media',
-            t_categoria: 2
+            t_categoria: 2,
+            processandoInsert: false
         }
     },
     methods: {
         async inserir_tarefa() {
+            this.processandoInsert = true
             const dados = {
                 titulo: this.t_titulo,
                 descricao: this.t_desc,
@@ -68,15 +80,18 @@ export default {
             }
 
             try {
-                console.log('dados enviados: ', dados)
+
                 const response = await axios.post('http://127.0.0.1:8000/api/tarefa/register', dados)
                 this.$refs.inserirTarefaAlert.style.color = 'green'
                 this.$refs.inserirTarefaAlert.innerText = response.data.message
+                this.t_titulo = ''
+                this.t_desc = ''
             } catch (error){
                 console.log(error)
                 this.$refs.inserirTarefaAlert.style.color = 'red'
                 this.$refs.inserirTarefaAlert.innerText = 'Preencha todos os campos corretamente'
             } finally {
+                this.processandoInsert = false
                 setTimeout(() => {
                 if (this.$refs.inserirTarefaAlert) {
                     this.$refs.inserirTarefaAlert.innerText = ''
@@ -90,5 +105,14 @@ export default {
 
 <style src="../assets/static.css"></style>
 <style>
-
+.formulario-insert {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 10px;
+    
+    input, textarea, select {
+        border: 1px solid var(--verde-ciano);
+    }
+}
 </style>
