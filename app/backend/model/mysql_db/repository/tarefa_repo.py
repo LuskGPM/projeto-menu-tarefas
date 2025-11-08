@@ -36,3 +36,19 @@ class TarefaRepository(MySQLRepository):
             statement = select(Tarefa).where(Tarefa.usuario_id == usuario_id)
             result = await db.session_async.execute(statement)
             return result.scalars().all()
+        
+    async def _delete_tarefa(self, titulo: str, status: str, prioridade: str, usuario_id: int) -> None | Exception:
+        async with self as db:
+            try:
+                statement = select(Tarefa).where(
+                    (Tarefa.usuario_id == usuario_id) &
+                    (Tarefa.titulo == titulo) &
+                    (Tarefa.status == status) &
+                    (Tarefa.prioridade == prioridade)
+                )
+                await db.session_async.execute(statement)
+                await db.session_async.commit()
+            except Exception as e:
+                await db.session_async.rollback()
+                raise Exception(f'Erro ao deletar tarefa: {e}')
+            

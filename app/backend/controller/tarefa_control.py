@@ -1,5 +1,5 @@
 from ..model.mysql_db import Tarefa, TarefaRepository
-from ..api.schemas import TarefaCreate, TarefaUpdate
+from ..api.schemas import TarefaCreate, TarefaUpdate, TarefaDelete
 from .configs import RedisControl as RedCache, COMMON_KEYS, criar_key
 from typing import Literal, Sequence
 import asyncio
@@ -40,6 +40,18 @@ class TarefaControler(TarefaRepository):
         cache_key = criar_key(COMMON_KEYS['TASK'], f'{tarefa_existente.status}_{usuario_id}')
         cache = RedCache(cache_key)
         await cache.excluir_cache()
+        
+    async def processar_tarefa_delete(self, tarefa: TarefaDelete, usuario_id):
+        await self._delete_tarefa(
+            titulo=tarefa.titulo,
+            status=tarefa.status,
+            prioridade=tarefa.prioridade,
+            usuario_id=usuario_id
+        )
+        cache_key = criar_key(COMMON_KEYS['TASK'], f'{tarefa.status}_{usuario_id}')
+        cache = RedCache(cache_key)
+        await cache.excluir_cache()
+        
     
     async def receber_tarefa_por_status(self, status: Literal['pendente', 'em_andamento', 'concluida'], usuario_id: int) -> dict | list[dict]:
         # 1. Tenta buscar no cache primeiro
@@ -69,4 +81,3 @@ class TarefaControler(TarefaRepository):
         )
         
         return pendentes + em_andamento + concluidas
-    
