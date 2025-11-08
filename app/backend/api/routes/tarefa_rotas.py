@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from ...controller import TarefaControler, UsuarioControler
-from ..schemas import TarefaCreate, TarefaUpdate
+from ..schemas import TarefaCreate, TarefaUpdate, TarefaDelete
 from ..dependencies import verificar_login
 
 rotas_tarefas = APIRouter()
@@ -39,7 +39,7 @@ async def rota_tarefa_update(tarefa: TarefaUpdate) -> dict:
         raise HTTPException(400, f'Erro ao atualizar tarefa: {e}')
     
 @rotas_tarefas.get('/api/tarefa', dependencies=[Depends(verificar_login)])
-async def rota_tarefa_get_all(request: Request) -> JSONResponse:
+async def rota_tarefa_get_all() -> JSONResponse:
     try:
         user_control = UsuarioControler()
         tarefa_control = TarefaControler()
@@ -53,3 +53,19 @@ async def rota_tarefa_get_all(request: Request) -> JSONResponse:
         return JSONResponse(tarefas, 200)
     except Exception as e:
         raise HTTPException(400, f'Erro ao solicitar todas as tarefas: {e}')
+
+@rotas_tarefas.delete('/api/tarefa/delete', dependencies=[Depends(verificar_login)])
+async def rota_tarefa_delete(tarefa: TarefaDelete):
+    try:
+        user_control = UsuarioControler()
+        tarefa_control = TarefaControler()
+        
+        dados_sessao = await user_control.obter_dados_sessao()
+        usuario_id = dados_sessao['id']
+        
+        await tarefa_control.processar_tarefa_delete(tarefa, usuario_id)
+        await user_control.esta_logado()
+        
+        return {'message': 'Tarefa excluída com sucesso'}
+    except Exception as e:
+        raise HTTPException(400, f'Erro ao deletar tarefas: {e}')
