@@ -80,7 +80,7 @@ export default {
             }
 
             try {
-
+                
                 const response = await axios.post('http://127.0.0.1:8000/api/tarefa/register', dados)
                 this.$refs.inserirTarefaAlert.style.color = 'green'
                 this.$refs.inserirTarefaAlert.innerText = response.data.message
