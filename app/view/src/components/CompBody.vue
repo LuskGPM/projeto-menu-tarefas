@@ -12,9 +12,9 @@
           Ordenar por
         </button>
         <ul class="dropdown-menu">
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'prioridade'}" @click="ordenarBody = 'prioridade'">Prioridade</button></li>
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'status'}" @click="ordenarBody = 'status'">Status</button></li>
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'data'}" @click="ordenarBody = 'data'">Data</button></li>
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'prioridade'}" @click="ordenarPor('prioridade')">Prioridade</button></li>
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'status'}" @click="ordenarPor('status')">Status</button></li>
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'data'}" @click="ordenarPor('data')">Data</button></li>
         </ul>
         <div class="input-group" role="search">
           <span class="input-group-text">
@@ -54,7 +54,8 @@ export default {
         this.btn_insert_active = !this.btn_insert_active
       } else { this.btn_show_active = !this.btn_show_active }
     },
-    ordenarPor() {
+    ordenarPor(valor) {
+      this.ordenarBody = valor
       this.$refs.mostrarTarefasRef.ordenar = this.ordenarBody
     },
     buscarTitulo(event) {

@@ -1,6 +1,24 @@
 <template>
     <section id="mostrarTarefa">
-        <p v-if="tarefas.length == 0" class="no-tasks">
+
+        <div v-if="loading" class="container-tasks">
+            <div class="card" style="border-left: 3px solid green;">
+                <div class="card-header header-flex-card placeholder-glow">
+                    <span class="placeholder col-1 paragrafo"></span>
+                    <span class="placeholder col-1 paragrafo"></span>
+                    <span class="placeholder col-1 paragrafo"></span>
+                </div>
+                <div class="card-body placeholder-glow" style="display: flex; flex-direction: column;">
+                    <span class="card-title placeholder col-4"></span>
+                    <span class="card-text placeholder col-8"></span>
+                </div>
+                <div class="card-footer placeholder-glow" style="display: flex; justify-content: center;">
+                    <span class="placeholder col-2"></span>
+                </div>
+            </div>
+        </div>
+
+        <p v-else-if="tarefas.length == 0" class="no-tasks">
             Nenhuma tarefa encontrada
         </p>
         <div v-else class="container-tasks">
@@ -12,14 +30,13 @@
                         'alert-p-orange': tarefa.status === 'em_andamento',
                         'alert-p-red': tarefa.status === 'pendente',
                         'alert-p-green': tarefa.status === 'concluida'
-                    }">{{ tarefa.status }}</p>
-                    <p>{{ tarefa.categoria_nome }}</p>
-                    <p>Prioridade: {{ tarefa.prioridade }}</p>
+                    }" class="paragrafo">{{ tarefa.status }}</p>
+                    <p class="paragrafo">{{ tarefa.categoria_nome }}</p>
+                    <p class="paragrafo">Prioridade: {{ tarefa.prioridade }}</p>
                 </div>
                 <div class="card-body" style="background-color: white;" :style="{color: tarefa.categoria_cor}">
                     <h4 class="card-title">{{ tarefa.titulo }}</h4>
                     <p class="card-text">{{ tarefa.descricao }}</p>
-
                 </div>
                 <div class="card-footer text-body-secondary" style="text-align: center;">
                     {{ calcularData(tarefa.data_atualizacao) }} dias atrás
@@ -118,14 +135,14 @@ export default {
     justify-content: center;
     align-items: center;
 
-    p {
+    .paragrafo {
         justify-self: center;
     }
 
-    p:first-child{
+    .paragrafo:first-child{
         grid-column: 1/2;
     }
-    p:last-child{
+    .paragrafo:last-child{
         grid-column: 3/4;
     }
 }
