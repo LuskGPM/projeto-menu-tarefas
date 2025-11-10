@@ -9,7 +9,12 @@ class TarefaCreate(BaseModel):
     categoria_id: int
     
 class TarefaUpdate(BaseModel):
+    id: int
     titulo: str | None = Field(None, min_length=3, max_length=60)
     descricao: str| None = None
     status: Literal['pendente', 'em_andamento', 'concluida'] | None = None
 
+class TarefaDelete(BaseModel):
+    tarefa_id: int
+    prioridade: Literal['baixa', 'media', 'alta']
+    

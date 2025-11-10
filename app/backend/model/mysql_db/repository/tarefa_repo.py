@@ -4,24 +4,6 @@ from sqlalchemy import select, delete, Sequence
 
 class TarefaRepository(MySQLRepository):
     
-    async def _select_by_status(self, status: str, usuario_id: int) -> Sequence[Tarefa]:
-        async with self as db:
-            statement = select(Tarefa).where(
-                (Tarefa.status == status) &
-                (Tarefa.usuario_id == usuario_id)
-            )
-            result = await db.session_async.execute(statement)
-            return result.scalars().all()
-        
-    async def _select_by_categoria(self, categoria_id: int, usuario_id: int) -> Sequence[Tarefa]:
-        async with self as db:
-            statement = select(Tarefa).where(
-                (Tarefa.categoria_id == categoria_id) &
-                (Tarefa.usuario_id == usuario_id)
-            )
-            result = await db.session_async.execute(statement)
-            return result.scalars().all()
-        
     async def _select_by_prioridade(self, prioridade: str, usuario_id: int) -> Sequence[Tarefa]:
         async with self as db:
             statement = select(Tarefa).where(
@@ -30,12 +12,15 @@ class TarefaRepository(MySQLRepository):
             )
             result = await db.session_async.execute(statement)
             return result.scalars().all()
-
-    async def _select_all_by_user(self, usuario_id: int) -> Sequence[Tarefa]:
+        
+    async def _select_by_id_user_tarefa(self, tarefa_id: int, usuario_id: int) -> Sequence[Tarefa]:
         async with self as db:
-            statement = select(Tarefa).where(Tarefa.usuario_id == usuario_id)
+            statement = select(Tarefa).where(
+                (Tarefa.id == tarefa_id) &
+                (Tarefa.usuario_id == usuario_id)
+            )
             result = await db.session_async.execute(statement)
-            return result.scalars().all()
+            return result.scalar_one_or_none()
         
     async def _delete_tarefa(self, tarefa_id: int, usuario_id: int) -> None | Exception:
         async with self as db:

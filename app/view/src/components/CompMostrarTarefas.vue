@@ -25,7 +25,7 @@
             <div v-for="tarefa in tarefasOrdenadas()" :key="tarefa.id" class="card" :style="{
                 borderLeft: tarefa.status === 'pendente' ? '3px solid red' : tarefa.status === 'em_andamento' ? '3px solid orange' : '3px solid green'
             }">
-                <div class="card-header header-flex-card">
+                <div class="card-header header-grid-card">
                     <p :class="{
                         'alert-p-orange': tarefa.status === 'em_andamento',
                         'alert-p-red': tarefa.status === 'pendente',
@@ -34,9 +34,19 @@
                     <p class="paragrafo">{{ tarefa.categoria_nome }}</p>
                     <p class="paragrafo">Prioridade: {{ tarefa.prioridade }}</p>
                 </div>
-                <div class="card-body" style="background-color: white;" :style="{color: tarefa.categoria_cor}">
-                    <h4 class="card-title">{{ tarefa.titulo }}</h4>
-                    <p class="card-text">{{ tarefa.descricao }}</p>
+                <div class="card-body d-flex justify-content-between" style="background-color: white;"
+                    :style="{ color: tarefa.categoria_cor }">
+                    <div class="texto">
+                        <h4 class="card-title">{{ tarefa.titulo }}</h4>
+                        <p class="card-text descricao">{{ tarefa.descricao }}</p>
+                    </div>
+                    <div class="btn-group-vertical">
+                        <CompEditarTarefas :tarefa-id="tarefa.id" :tarefa-titulo="tarefa.titulo"
+                            :tarefa-status="tarefa.status" :tarefa-desc="tarefa.descricao"
+                            @tarefa-editada="atualizarTarefas" />
+                        <CompExcluirTarefas :tarefa-id="tarefa.id" :tarefa-titulo="tarefa.titulo"
+                            :tarefa-prioridade="tarefa.prioridade" @tarefa-excluida="atualizarTarefas" />
+                    </div>
                 </div>
                 <div class="card-footer text-body-secondary" style="text-align: center;">
                     {{ calcularData(tarefa.data_atualizacao) }} dias atrás
@@ -48,9 +58,15 @@
 
 <script>
 import axios from 'axios';
+import CompExcluirTarefas from './CompExcluirTarefas.vue';
+import CompEditarTarefas from './CompEditarTarefas.vue';
 
 export default {
     name: 'CompMostrarTarefas',
+    components: {
+        CompExcluirTarefas,
+        CompEditarTarefas
+    },
     data() {
         return {
             tarefas: [],
@@ -101,17 +117,17 @@ export default {
             }
 
             if (this.ordenar === 'prioridade') {
-                const ordemPrioridade = {'alta': 1, 'media': 2, 'baixa': 3}
-                return [...tarefasFiltradas].sort((a,b) => {
+                const ordemPrioridade = { 'alta': 1, 'media': 2, 'baixa': 3 }
+                return [...tarefasFiltradas].sort((a, b) => {
                     return ordemPrioridade[a.prioridade] - ordemPrioridade[b.prioridade]
                 })
-            } else if (this.ordenar === 'status'){
-                const ordemStatus = {'pendente': 1, 'em_andamento': 2, 'concluida': 3}
-                return [...tarefasFiltradas].sort((a,b) => {
+            } else if (this.ordenar === 'status') {
+                const ordemStatus = { 'pendente': 1, 'em_andamento': 2, 'concluida': 3 }
+                return [...tarefasFiltradas].sort((a, b) => {
                     return ordemStatus[a.status] - ordemStatus[b.status]
                 })
             } else if (this.ordenar === 'data') {
-                return [...tarefasFiltradas].sort((a,b) => {
+                return [...tarefasFiltradas].sort((a, b) => {
                     return new Date(b.data_atualizacao) - new Date(a.data_atualizacao)
                 })
             }
@@ -129,7 +145,7 @@ export default {
     gap: 20px;
 }
 
-.header-flex-card {
+.header-grid-card {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     justify-content: center;
@@ -139,15 +155,31 @@ export default {
         justify-self: center;
     }
 
-    .paragrafo:first-child{
+    .paragrafo:first-child {
         grid-column: 1/2;
     }
-    .paragrafo:last-child{
+
+    .paragrafo:last-child {
         grid-column: 3/4;
     }
 }
 
-.alert-p-orange {color: rgb(255, 170, 0);}
-.alert-p-red {color: rgb(255, 144, 144);}
-.alert-p-green {color: #00ba6d;}
+.card-text.descricao {
+    max-width: 200px;
+    max-height: 65px;
+    overflow-y: scroll;
+}
+
+
+.alert-p-orange {
+    color: rgb(255, 170, 0);
+}
+
+.alert-p-red {
+    color: rgb(255, 144, 144);
+}
+
+.alert-p-green {
+    color: #00ba6d;
+}
 </style>

@@ -59,6 +59,7 @@ import axios from 'axios';
 
 export default {
     name: 'CompInserirTarefa',
+    emits: ['tarefa-inserida'],
     data() {
         return {
             t_titulo: '',
@@ -87,6 +88,7 @@ export default {
                 this.inserirAlert = response.data.message
                 this.t_titulo = ''
                 this.t_desc = ''
+                this.$emit('tarefa-inserida')
             } catch (error) {
                 console.log(error)
                 this.$refs.inserirTarefaAlert.style.color = 'red'
