@@ -1,54 +1,65 @@
 <template>
   <main class="main-body">
-    <button class="button-body-geral" :class="{ 'color-white': btn_insert_active }" type="button"
-      data-bs-toggle="collapse" data-bs-target="#formInsertTarefa" aria-expanded="false"
-      aria-controls="formInsertTarefa" @click="toggleBTN">Inserir tarefa</button>
+    <button class="button-body-geral" :class="{ 'focus': btn_insert_active }" type="button" data-bs-toggle="collapse"
+      data-bs-target="#formInsertTarefa" aria-expanded="false" aria-controls="formInsertTarefa"
+      @click="toggleBTN(true)">Inserir tarefa</button>
     <div class="collapse multi-collapse" id="formInsertTarefa">
-      <CompInserirTarefa class="comp-inserir" />
+      <CompInserirTarefa />
+    </div>
+    <div class="card">
+      <div class="card-header header-principal">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          Ordenar por
+        </button>
+        <ul class="dropdown-menu">
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'prioridade'}" @click="ordenarBody = 'prioridade'">Prioridade</button></li>
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'status'}" @click="ordenarBody = 'status'">Status</button></li>
+          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'data'}" @click="ordenarBody = 'data'">Data</button></li>
+        </ul>
+        <div class="input-group" role="search">
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+          <input class="form-control me-2" type="search" placeholder="Buscar Titulo" aria-label="Search"
+            @input="buscarTitulo" style="max-width: 250px;"/>
+        </div>
+      </div>
+      <div id="formMostrarTarefas" class="card-body">
+        <CompMostrarTarefas ref="mostrarTarefasRef" />
+      </div>
     </div>
   </main>
 </template>
 
 <script>
 import CompInserirTarefa from './CompInserirTarefa.vue';
+import CompMostrarTarefas from './CompMostrarTarefas.vue';
 
 export default {
   name: 'CompBody',
   components: {
-    CompInserirTarefa
+    CompInserirTarefa,
+    CompMostrarTarefas
   },
   data() {
     return {
-      btn_insert_active: false
+      btn_insert_active: false,
+      btn_show_active: false,
+      ordenarBody: 'prioridade'
     }
   },
   methods: {
-    toggleBTN() {
-      this.btn_insert_active = !this.btn_insert_active
-      this.animateGradient()
+    toggleBTN(is_insert_btn) {
+      if (is_insert_btn) {
+        this.btn_insert_active = !this.btn_insert_active
+      } else { this.btn_show_active = !this.btn_show_active }
     },
-    animateGradient() {
-      const button = this.$el.querySelector('.button-body-geral')
-      let progress = 0
-      const duration = 300 // ms
-      const startTime = performance.now()
-
-      const animate = (currentTime) => {
-        progress = Math.min((currentTime - startTime) / duration, 1)
-
-        // Interpola entre as cores
-        const r1 = this.btn_insert_active ? 255 + (84 - 255) * progress : 84 + (255 - 84) * progress
-        const g1 = this.btn_insert_active ? 255 + (224 - 255) * progress : 224 + (255 - 224) * progress
-        const b1 = this.btn_insert_active ? 255 + (182 - 255) * progress : 182 + (255 - 182) * progress
-
-        button.style.background = `linear-gradient(49deg, rgba(${r1}, ${g1}, ${b1}, 1) 1%, rgba(165, 215, 238, 1) 100%)`
-
-        if (progress < 1) {
-          requestAnimationFrame(animate)
-        }
-      }
-
-      requestAnimationFrame(animate)
+    ordenarPor() {
+      this.$refs.mostrarTarefasRef.ordenar = this.ordenarBody
+    },
+    buscarTitulo(event) {
+      const termo = event.target.value
+      this.$refs.mostrarTarefasRef.filtroTitulo = termo
     }
   }
 }
@@ -67,18 +78,32 @@ export default {
   width: 100%;
   border: 2px solid var(--azul-claro);
   border-radius: 10px;
-  background: #FFF;
-  background: linear-gradient(107deg, rgba(255, 255, 255, 1) 0%, rgba(165, 215, 238, 1) 100%);
+  background-color: var(--azul-claro);
   box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.279);
   transition: all .3s ease-out;
   font-size: 1.3em;
+  margin-top: 20px;
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
-.color-white {
+.focus {
   color: var(--branco-painel-texto);
+  background-color: var(--azul-escuro);
 }
 
-.comp-inserir {
-  margin-top: 15px;
+.card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header-principal {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 10px;
 }
 </style>

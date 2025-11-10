@@ -59,7 +59,7 @@
 
             .label {
                 padding-left: 5px;
-                color: var(--cinza-claro);
+                color: var(--cinza);
             }
 
             .input {
@@ -72,7 +72,7 @@
                 text-indent: 15px;
                 outline: none;
                 color: var(--azul-escuro);
-                border: 1px solid var(--cinza-claro);
+                border: 1px solid var(--cinza);
                 background-color: var(--branco-painel-texto);
                 cursor: pointer;
             }
@@ -99,7 +99,7 @@
                 padding: 0;
             }
 
-            .input:last-child:active {
+            .input:last-child:focus {
                 background-color: var(--verde-ciano);
                 color: var(--branco-painel-texto);
             }

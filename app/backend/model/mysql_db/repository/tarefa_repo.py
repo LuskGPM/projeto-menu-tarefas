@@ -1,6 +1,6 @@
 from ..entities import Tarefa
 from .mysql_repo import MySQLRepository
-from sqlalchemy import select, Sequence
+from sqlalchemy import select, delete, Sequence
 
 class TarefaRepository(MySQLRepository):
     
@@ -37,14 +37,12 @@ class TarefaRepository(MySQLRepository):
             result = await db.session_async.execute(statement)
             return result.scalars().all()
         
-    async def _delete_tarefa(self, titulo: str, status: str, prioridade: str, usuario_id: int) -> None | Exception:
+    async def _delete_tarefa(self, tarefa_id: int, usuario_id: int) -> None | Exception:
         async with self as db:
             try:
-                statement = select(Tarefa).where(
+                statement = delete(Tarefa).where(
                     (Tarefa.usuario_id == usuario_id) &
-                    (Tarefa.titulo == titulo) &
-                    (Tarefa.status == status) &
-                    (Tarefa.prioridade == prioridade)
+                    (Tarefa.id == tarefa_id)
                 )
                 await db.session_async.execute(statement)
                 await db.session_async.commit()

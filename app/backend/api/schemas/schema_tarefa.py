@@ -12,8 +12,4 @@ class TarefaUpdate(BaseModel):
     titulo: str | None = Field(None, min_length=3, max_length=60)
     descricao: str| None = None
     status: Literal['pendente', 'em_andamento', 'concluida'] | None = None
-    
-class TarefaDelete(BaseModel):
-    titulo: str | None = Field(None, min_length=3, max_length=60)
-    status: Literal['pendente', 'em_andamento', 'concluida']
-    prioridade: Literal['baixa', 'media', 'alta']
+

@@ -1,57 +1,55 @@
 <template>
-    <main>
-        <section id="inserirTarefa">
-            <form class="formulario-insert">
-                <div class="form-floating">
-                    <input type="text" id="tarefaTitulo" v-model="t_titulo" class="form-control">
-                    <label for="tarefaTitulo">Titulo</label>
-                </div>
+    <section id="inserirTarefa">
+        <form class="formulario-insert">
+            <div class="form-floating">
+                <input type="text" id="tarefaTitulo" v-model="t_titulo" class="form-control" placeholder="Titulo">
+                <label for="tarefaTitulo">Titulo</label>
+            </div>
 
-                <div class="form-floating">
-                    <textarea type="text" id="tarefaDesc" v-model="t_desc" class="form-control"></textarea>
-                    <label for="tarefaDesc">Descrição</label>
-                </div>
+            <div class="form-floating">
+                <textarea type="text" id="tarefaDesc" v-model="t_desc" class="form-control" placeholder="descricao"></textarea>
+                <label for="tarefaDesc">Descrição</label>
+            </div>
 
-                <div class="form-floating">
-                    <select aria-label="Selecione o status" id="tarefaStatus" class="form-select" v-model="t_status">
-                        <option value="pendente">Pendente</option>
-                        <option value="em_andamento">Em andamento</option>
-                        <option value="concluida">Concluído</option>
-                    </select>
-                    <label for="tarefaStatus">Status</label>
-                </div>
+            <div class="form-floating">
+                <select aria-label="Selecione o status" id="tarefaStatus" class="form-select" v-model="t_status">
+                    <option value="pendente">Pendente</option>
+                    <option value="em_andamento">Em andamento</option>
+                    <option value="concluida">Concluído</option>
+                </select>
+                <label for="tarefaStatus">Status</label>
+            </div>
 
-                <div class="form-floating">
-                    <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select"
-                        v-model="t_prioridade">
-                        <option value="alta">Alta</option>
-                        <option value="media">Media</option>
-                        <option value="baixa">Baixa</option>
-                    </select>
-                    <label for="tarefaPrioridade">Prioridade</label>
-                </div>
+            <div class="form-floating">
+                <select aria-label="Selecione a prioridade" id="tarefaPrioriodade" class="form-select"
+                    v-model="t_prioridade">
+                    <option value="alta">Alta</option>
+                    <option value="media">Media</option>
+                    <option value="baixa">Baixa</option>
+                </select>
+                <label for="tarefaPrioridade">Prioridade</label>
+            </div>
 
-                <div class="form-floating">
-                    <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select"
-                        v-model.number="t_categoria">
-                        <option value="1">Trabalho</option>
-                        <option value="2">Pessoal</option>
-                        <option value="3">Estudos</option>
-                        <option value="4">Urgente</option>
-                        <option value="5">Casa</option>
-                        <option value="6">Saúde</option>
-                    </select>
-                    <label for="tarefaCategoria">Categoria</label>
-                </div>
+            <div class="form-floating">
+                <select aria-label="Selecione a prioridade" id="tarefaCategoria" class="form-select"
+                    v-model.number="t_categoria">
+                    <option value="1">Trabalho</option>
+                    <option value="2">Pessoal</option>
+                    <option value="3">Estudos</option>
+                    <option value="4">Urgente</option>
+                    <option value="5">Casa</option>
+                    <option value="6">Saúde</option>
+                </select>
+                <label for="tarefaCategoria">Categoria</label>
+            </div>
 
-                <p ref="inserirTarefaAlert"></p>
+            <p ref="inserirTarefaAlert"></p>
 
-                <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa"
-                    :disabled="processandoInsert">
-            </form>
-        </section>
-        <section id="tarefas"> </section>
-    </main>
+            <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa"
+                :disabled="processandoInsert">
+        </form>
+    </section>
+    <section id="tarefas"> </section>
 </template>
 
 <script>

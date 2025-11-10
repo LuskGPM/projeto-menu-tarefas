@@ -4,7 +4,8 @@
 :root {
     --azul-claro: #a5d7ee;
     --branco-painel-texto: #ffffff;
-    --cinza-claro: #6a6a6a;
+    --cinza-claro: #dddddd48;
+    --cinza: #525252;
     --azul-escuro: #25325c;
     --verde-ciano: #54e0b6;
     --vermelho-claro: #ff3939;
@@ -14,4 +15,5 @@
 * {
     margin: 0;
     padding: 0;
+    scrollbar-width: none;
 }

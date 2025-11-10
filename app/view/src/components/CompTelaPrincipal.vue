@@ -34,10 +34,12 @@ export default {
 <style>
 body {
     width: 100vw;
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: 150px 1fr;
+    background-color: var(--cinza-claro);
 
     .header-pp {
         grid-column: 1/-1;
@@ -48,6 +50,7 @@ body {
         grid-column: 2/-2;
         grid-row: 2/3;
         align-self: start;
+        gap: 15px;
     }
 }
 </style>
