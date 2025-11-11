@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from ...controller import UsuarioControler
-from ..schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate
+from ..schemas import UsuarioCreate, UsuarioLogin, UsuarioUpdate, UsuarioValidarSenha
 from ..dependencies import verificar_login
 
 rotas_user = APIRouter()
@@ -12,7 +12,7 @@ async def rota_user_cadastro(user_dados: UsuarioCreate) -> dict:
         user_control = UsuarioControler()
         verificar_nickname = await user_control.verificar_disponibilidade_nickname(user_dados.nickname)
         if verificar_nickname:
-            return{'message': 'Usuario já cadastrado'}
+            return{'message': 'Nickname já cadastrado'}
         await user_control.processar_cadastro(user_dados)
         return {'message': 'Usuário cadastrado com sucesso'}
     except Exception as e:
@@ -40,6 +40,12 @@ async def rota_user_logout() -> dict:
 async def rota_user_update(user_data: UsuarioUpdate) -> dict:
     try:
         user_control = UsuarioControler()
+        
+        if user_data.nickname:
+            if user_control._nickname_exists(user_data.nickname):
+                return {'message': 'Nickname já está em uso'}
+            return
+        
         await user_control.processar_update(user_data)
         await user_control.esta_logado()
         return {'message': 'Dados atualizados com sucesso'}
@@ -72,7 +78,17 @@ async def rota_user_delete():
         return {'message': 'Usuário deletado com sucesso'}
     except Exception as e:
         raise HTTPException(400, f'Erro ao deletar usuário: {e}')
-
+    
+@rotas_user.post('/api/user/validar-senha', dependencies=[Depends(verificar_login)])
+async def rota_user_validar_senha(user_data: UsuarioValidarSenha):
+    try:
+        user_control = UsuarioControler()
+        if await user_control.verificar_igualdade_nas_senhas(user_data):
+            return {'message': 'true'}
+        return {'message': 'false'}
+    except Exception as e:
+        raise HTTPException(400, f'Erro na validação de senhas {e}')
+        
 @rotas_user.get('/')
 async def hello_world() -> JSONResponse:
     return JSONResponse(

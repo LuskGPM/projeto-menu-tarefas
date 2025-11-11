@@ -93,7 +93,7 @@ export default {
 @import url('../assets/static.css');
 
 .navbar {
-    background-color: var(--azul-claro);
+    background-color: var(--azul-escuro);
     padding: 20px;
     box-shadow: 3px 3px 7px rgba(69, 69, 69, 0.211);
     position: sticky;
@@ -103,7 +103,7 @@ export default {
 .span {
     font-size: 3em !important;
     cursor: pointer;
-    color: var(--azul-escuro);
+    color: var(--branco-painel-texto);
 }
 
 .overlay {
@@ -134,6 +134,11 @@ export default {
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        color: var(--azul-escuro);
+
+        .span {
+            color: var(--azul-escuro);
+        }
     }
 
     .menu-items:first-child {

@@ -1,22 +1,22 @@
 <template>
-    <div class="body">
-        <CompHeader class="header-pp" />
-        <CompBody class="body-pp" />
-        <CompFooter class="footer-pp"/>
+    <div class="tela-usuario">
+        <CompHeader class="header-pu" />
+        <CompBodyUser class="body-pu"/>
+        <CompFooter class="footer-pu"/>
     </div>
 </template>
 
 <script>
 import CompHeader from './CompHeader.vue';
 import { useSessionMonitor } from '../composables/useSessionMonitor'
-import CompBody from './CompBody.vue';
+import CompBodyUser from './CompBodyUser.vue';
 import CompFooter from './CompFooter.vue';
 
 export default {
-    name: 'CompTelaPrincipal',
+    name: 'CompTelaUsuario',
     components: {
         CompHeader,
-        CompBody,
+        CompBodyUser,
         CompFooter
     },
     data() {
@@ -32,9 +32,8 @@ export default {
 </script>
 
 <style src="../assets/static.css"></style>
-
 <style>
-.body {
+.tela-usuario {
     width: 100vw;
     height: auto;
     min-height: 100vh;
@@ -43,18 +42,18 @@ export default {
     grid-template-rows: 150px 1fr 150px;
     background-color: var(--cinza-claro);
 
-    .header-pp {
+    .header-pu {
         grid-column: 1/-1;
         grid-row: 1/2;
     }
 
-    .body-pp {
+    .body-pu {
         grid-column: 2/-2;
         grid-row: 2/-2;
-        align-self: start;
-        gap: 15px;
+        box-shadow: 5px 5px 7px rgba(0, 0, 0, 0.178);
     }
-    .footer-pp {
+
+    .footer-pu {
         grid-column: 1/-1;
         grid-row: -2/-1;
     }

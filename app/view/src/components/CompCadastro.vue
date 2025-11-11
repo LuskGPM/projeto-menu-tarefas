@@ -22,7 +22,7 @@
                         ref="confirmSenha" required />
                     <p ref="alertcad"></p>
 
-                    <input type="submit" id="cadButton" value="Cadastrar" class="input" @click.prevent="cadastrar" />
+                    <input type="submit" id="cadButton" value="Cadastrar" class="input" @click.prevent="cadastrar" :disabled="loading"/>
                 </div>
                 <div id="cad-login">
                     <router-link to="/login" class="link">
@@ -49,7 +49,8 @@ export default {
             nome: '',
             nickname: '',
             senha: '',
-            confsenha: ''
+            confsenha: '',
+            loading: false
         }
     },
     methods: {
@@ -64,11 +65,16 @@ export default {
                 senha_front: this.senha
             }
             try {
+                this.loading = true
                 const response = await axios.post('http://127.0.0.1:8000/api/user/register', dados)
+                this.loading = false
                 this.$refs.alertcad.innerText = response.data.message
                 this.$refs.alertcad.style.color = 'green'
-                this.$router.push('/login')
+                if (response.data.message === 'Usuário cadastrado com sucesso'){
+                    this.$router.push('/tela-principal')
+                }
             } catch (error) {
+                this.loading = false
                 this.$refs.alertcad.innerText = error.response.data.detail
                 this.$refs.alertcad.style.color = 'red'
             }
