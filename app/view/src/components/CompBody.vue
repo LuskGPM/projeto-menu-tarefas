@@ -1,27 +1,30 @@
 <template>
   <main class="main-body">
-    <button class="button-body-geral" :class="{ 'focus': btn_insert_active }" type="button" data-bs-toggle="collapse"
-      data-bs-target="#formInsertTarefa" aria-expanded="false" aria-controls="formInsertTarefa"
-      @click="toggleBTN(true)">Inserir tarefa</button>
+    <button :class="{ 'focus': btn_insert_active }" @click="btn_insert_active = !btn_insert_active" class="button-body"
+      type="button" data-bs-toggle="collapse" data-bs-target="#formInsertTarefa" aria-expanded="false"
+      aria-controls="formInsertTarefa">Inserir tarefa</button>
     <div class="collapse multi-collapse" id="formInsertTarefa">
-      <CompInserirTarefa />
+      <CompInserirTarefa @tarefa-inserida="atualizarTarefas" />
     </div>
     <div class="card">
       <div class="card-header header-principal">
-        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="buttonOrdenar">
           Ordenar por
         </button>
         <ul class="dropdown-menu">
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'prioridade'}" @click="ordenarBody = 'prioridade'">Prioridade</button></li>
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'status'}" @click="ordenarBody = 'status'">Status</button></li>
-          <li><button class="dropdown-item" :class="{'active': ordenarBody === 'data'}" @click="ordenarBody = 'data'">Data</button></li>
+          <li><button class="dropdown-item" :class="{ 'active': ordenarBody === 'prioridade' }"
+              @click="ordenarPor('prioridade')">Prioridade</button></li>
+          <li><button class="dropdown-item" :class="{ 'active': ordenarBody === 'status' }"
+              @click="ordenarPor('status')">Status</button></li>
+          <li><button class="dropdown-item" :class="{ 'active': ordenarBody === 'data' }"
+              @click="ordenarPor('data')">Data</button></li>
         </ul>
-        <div class="input-group" role="search">
+        <div class="input-group" id="inputSearch"  role="search">
           <span class="input-group-text">
             <i class="bi bi-search"></i>
           </span>
           <input class="form-control me-2" type="search" placeholder="Buscar Titulo" aria-label="Search"
-            @input="buscarTitulo" style="max-width: 250px;"/>
+            @input="buscarTitulo"/>
         </div>
       </div>
       <div id="formMostrarTarefas" class="card-body">
@@ -49,17 +52,16 @@ export default {
     }
   },
   methods: {
-    toggleBTN(is_insert_btn) {
-      if (is_insert_btn) {
-        this.btn_insert_active = !this.btn_insert_active
-      } else { this.btn_show_active = !this.btn_show_active }
-    },
-    ordenarPor() {
+    ordenarPor(valor) {
+      this.ordenarBody = valor
       this.$refs.mostrarTarefasRef.ordenar = this.ordenarBody
     },
     buscarTitulo(event) {
       const termo = event.target.value
       this.$refs.mostrarTarefasRef.filtroTitulo = termo
+    },
+    atualizarTarefas() {
+      this.$refs.mostrarTarefasRef.atualizarTarefas()
     }
   }
 }
@@ -73,7 +75,7 @@ export default {
   flex-direction: column;
 }
 
-.button-body-geral {
+.button-body {
   padding: 20px;
   width: 100%;
   border: 2px solid var(--azul-claro);
@@ -105,5 +107,26 @@ export default {
   flex-direction: column-reverse;
   align-items: flex-start;
   gap: 10px;
+
+  #inputSearch {
+    max-width: 250px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .header-principal {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+
+    #inputSearch {
+      grid-column: 2/-1;
+      justify-self: flex-end;
+    }
+    #buttonOrdenar {
+      grid-column: 1/2;
+      justify-self: flex-start;
+    }
+  }
 }
 </style>

@@ -43,7 +43,7 @@
                 <label for="tarefaCategoria">Categoria</label>
             </div>
 
-            <p ref="inserirTarefaAlert"></p>
+            <p ref="inserirTarefaAlert" v-show="inserirAlert">{{ inserirAlert }}</p>
 
             <input type="submit" value="Inserir" class="btn btn-success" @click.prevent="inserir_tarefa"
                 :disabled="processandoInsert">
@@ -59,6 +59,7 @@ import axios from 'axios';
 
 export default {
     name: 'CompInserirTarefa',
+    emits: ['tarefa-inserida'],
     data() {
         return {
             t_titulo: '',
@@ -66,7 +67,8 @@ export default {
             t_status: 'pendente',
             t_prioridade: 'media',
             t_categoria: 2,
-            processandoInsert: false
+            processandoInsert: false,
+            inserirAlert: ''
         }
     },
     methods: {
@@ -83,18 +85,19 @@ export default {
             try {
                 const response = await axios.post('http://127.0.0.1:8000/api/tarefa/register', dados)
                 this.$refs.inserirTarefaAlert.style.color = 'green'
-                this.$refs.inserirTarefaAlert.innerText = response.data.message
+                this.inserirAlert = response.data.message
                 this.t_titulo = ''
                 this.t_desc = ''
+                this.$emit('tarefa-inserida')
             } catch (error) {
                 console.log(error)
                 this.$refs.inserirTarefaAlert.style.color = 'red'
-                this.$refs.inserirTarefaAlert.innerText = 'Preencha todos os campos corretamente'
+                this.inserirAlert = 'Preencha todos os campos corretamente'
             } finally {
                 this.processandoInsert = false
                 setTimeout(() => {
                     if (this.$refs.inserirTarefaAlert) {
-                        this.$refs.inserirTarefaAlert.innerText = ''
+                        this.inserirAlert = ''
                     }
                 }, 5000)
             }

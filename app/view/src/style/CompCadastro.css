@@ -106,11 +106,10 @@
         }
 
         #cad-login {
-            margin-top: 20px;
             grid-column: 2/-2;
-            grid-row: 4/-1;
+            grid-row: -2/-1;
             justify-self: center;
-            align-self: flex-start;
+            align-self: center;
 
             .link{
                 font-size: .7em;

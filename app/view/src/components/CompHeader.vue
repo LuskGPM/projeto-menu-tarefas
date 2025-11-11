@@ -2,7 +2,8 @@
     <header>
         <nav class="navbar">
             <div id="header-sanduiche">
-                <span class="material-symbols-outlined span" @click="toggle_menu">
+                <span class="material-symbols-outlined span" 
+               style="padding-left: 10px;" @click="toggle_menu">
                     menu
                 </span>
             </div>
@@ -11,6 +12,7 @@
 
             <aside class="sidebar" :class="{ 'sidebar-aberto': mostrarSideBar }">
                 <div id="header-close" @click="fechar_menu" class="menu-items">
+                    <p>Atalhos de usuário</p>
                     <span class="material-symbols-outlined span">
                         close
                     </span>
@@ -68,6 +70,9 @@ export default {
 .navbar {
     background-color: var(--azul-claro);
     padding: 20px;
+    box-shadow: 3px 3px 7px rgba(69, 69, 69, 0.211);
+    position: sticky;
+    top: 0;
 }
 
 .span {
@@ -107,7 +112,21 @@ export default {
     }
 
     .menu-items:first-child {
-        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-size: .7em;
+
+        .span {
+            box-sizing: border-box;
+            font-size: 2.5em !important;
+            border: 2px solid transparent;
+
+            &:hover {
+                border-radius: 10px;
+                border: 2px solid var(--azul-escuro);
+            }
+        }
     }
 
     #header-logout .span {

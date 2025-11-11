@@ -19,18 +19,15 @@ class UsuarioControler(UsuarioRepository):
         if not HashSenha(user.senha_antiga, dados_usuario.senha_hash).is_equal():
             raise ValueError('Senha atual incorreta')
         
-        # Prepara dados para atualização
         update_data = user.model_dump(exclude_unset=True, exclude={'senha_antiga', 'senha_nova'})
-        
-        # Processa nova senha se fornecida
+
         if user.senha_nova:
             update_data['senha_hash'] = HashSenha(user.senha_nova).hash()
         
         # Atualiza campos no objeto
         for key, value in update_data.items():
             setattr(dados_usuario, key, value)
-        
-        # Salva no banco
+    
         await self._update(dados_usuario)
         
         # Atualiza cache da sessão se nickname mudou
@@ -90,11 +87,6 @@ class UsuarioControler(UsuarioRepository):
             await cache.renovar_cache()  # Renova quando usado em rotas ativas
             return True
         return False
-    
-    async def verificar_sessao_sem_renovar(self) -> bool:
-        cache = RedCache(COMMON_KEYS['USER'])
-        sessao_ativa = await cache.receber_cache()
-        return sessao_ativa is not None
 
     async def obter_dados_sessao(self) -> dict | None:
         cache = RedCache(COMMON_KEYS['USER'])
