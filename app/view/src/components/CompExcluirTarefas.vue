@@ -3,6 +3,7 @@
         :data-bs-target="`#confirmDelete${tarefaId}`">
         <i class="bi bi-trash3"></i>
         Delete
+
     </button>
 
     <div class="modal fade" :id="`confirmDelete${tarefaId}`" tabindex="-1">

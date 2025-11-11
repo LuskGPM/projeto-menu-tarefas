@@ -107,6 +107,7 @@
             grid-row: -3/-1;
             justify-self: center;
             align-self: flex-start;
+            padding-top: 20px;
 
             .link {
                 font-size: .9em;

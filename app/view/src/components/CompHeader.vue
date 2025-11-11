@@ -13,6 +13,7 @@
             <aside class="sidebar" :class="{ 'sidebar-aberto': mostrarSideBar }">
                 <div id="header-close" @click="fechar_menu" class="menu-items">
                     <p>{{ nomeUser }}</p>
+
                     <span class="material-symbols-outlined span">
                         close
                     </span>
