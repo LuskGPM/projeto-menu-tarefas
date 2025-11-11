@@ -17,5 +17,7 @@ class UsuarioLogin(BaseModel):
 class UsuarioUpdate(BaseModel):
     nome: str | None = Field(None, min_length=3)
     nickname: str | None = Field(None, min_length=3)
-    senha_antiga: str = Field(min_length=8)
     senha_nova: str | None = Field(None, min_length=8)
+
+class UsuarioValidarSenha(BaseModel):
+    senha_do_front: str = Field(min_lenght=8)

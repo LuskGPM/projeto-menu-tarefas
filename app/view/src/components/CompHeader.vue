@@ -12,16 +12,21 @@
 
             <aside class="sidebar" :class="{ 'sidebar-aberto': mostrarSideBar }">
                 <div id="header-close" @click="fechar_menu" class="menu-items">
-                    <p>Atalhos de usuário</p>
+                    <p>{{ nomeUser }}</p>
+
                     <span class="material-symbols-outlined span">
                         close
                     </span>
                 </div>
-                <div id="header-perfil" class="menu-items">
+                <div id="header-perfil" class="menu-items" @click="redirect_user">
                     <span class="material-symbols-outlined span">
                         account_circle
                     </span>
                     Perfil
+                </div>
+                <div class="menu-items" @click="redirect_tarefas">
+                    <span class="bi bi-list-task span"></span>
+                    Tarefas
                 </div>
                 <div id="header-logout" class="menu-items" @click="logout">
                     <span class="material-symbols-outlined span">
@@ -41,8 +46,12 @@ export default {
     name: 'CompHeader',
     data() {
         return {
-            mostrarSideBar: false
+            mostrarSideBar: false,
+            nomeUser: ''
         }
+    },
+    created() {
+        this.buscar_nome()
     },
     methods: {
         toggle_menu() {
@@ -59,6 +68,23 @@ export default {
             } catch (error) {
                 console.log('erro:', error)
             }
+        },
+        async buscar_nome() {
+            try {
+                const response = await axios('http://127.0.0.1:8000/api/user/me')
+                const dados = response.data
+                this.nomeUser = dados['nome']
+
+            } catch (error) {
+                console.log(error)
+                this.nomeUser = 'Chefia'
+            }
+        },
+        redirect_user() {
+            this.$router.push('/tela-user')
+        },
+        redirect_tarefas() {
+            this.$router.push('/tela-principal')
         }
     }
 }
@@ -68,7 +94,7 @@ export default {
 @import url('../assets/static.css');
 
 .navbar {
-    background-color: var(--azul-claro);
+    background-color: var(--azul-escuro);
     padding: 20px;
     box-shadow: 3px 3px 7px rgba(69, 69, 69, 0.211);
     position: sticky;
@@ -78,7 +104,7 @@ export default {
 .span {
     font-size: 3em !important;
     cursor: pointer;
-    color: var(--azul-escuro);
+    color: var(--branco-painel-texto);
 }
 
 .overlay {
@@ -109,13 +135,18 @@ export default {
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        color: var(--azul-escuro);
+
+        .span {
+            color: var(--azul-escuro);
+        }
     }
 
     .menu-items:first-child {
         flex-direction: row;
         justify-content: space-between;
         align-items: flex-end;
-        font-size: .7em;
+        font-size: .9em;
 
         .span {
             box-sizing: border-box;

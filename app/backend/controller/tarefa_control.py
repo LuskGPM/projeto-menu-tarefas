@@ -62,6 +62,7 @@ class TarefaControler(TarefaRepository):
         # 2. Se não tem no cache, busca no MySQL
         tarefas: Sequence[Tarefa] = await self._select_by_prioridade(prioridade, usuario_id)
         categoria_control = CategoriaControler()
+        
         tarefas_dict_list = []
         for tarefa in tarefas:
             categoria = await categoria_control.obter_categoria_por_id(tarefa.categoria_id)
