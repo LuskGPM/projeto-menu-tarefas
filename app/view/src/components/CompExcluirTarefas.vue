@@ -2,7 +2,7 @@
     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
         :data-bs-target="`#confirmDelete${tarefaId}`">
         <i class="bi bi-trash3"></i>
-        Danger
+        Delete
     </button>
 
     <div class="modal fade" :id="`confirmDelete${tarefaId}`" tabindex="-1">

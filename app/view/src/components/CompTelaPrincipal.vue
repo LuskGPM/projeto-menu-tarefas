@@ -1,8 +1,8 @@
 <template>
-    <body>
+    <div class="body">
         <CompHeader class="header-pp" />
         <CompBody class="body-pp" />
-    </body>
+    </div>
 </template>
 
 <script>
@@ -31,7 +31,7 @@ export default {
 <style src="../assets/static.css"></style>
 
 <style>
-body {
+.body {
     width: 100vw;
     height: auto;
     min-height: 100vh;
