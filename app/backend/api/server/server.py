@@ -5,7 +5,7 @@ from ..routes import rotas_user, rotas_tarefas
 server = FastAPI()
 server.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # URL do seu frontend
+    allow_origins=["http://localhost:3000"],  # URL do seu frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
