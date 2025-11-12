@@ -16,7 +16,7 @@
                     <i class="bi bi-pencil-square"></i>
                     Editar
                 </button>
-                <button type="button" class="btn btn-primary" @click="atualizar_dados" style="margin-left: 10px;"
+                <button type="button" class="btn btn-primary" @click="atualizar_dados" style="margin-left: 10px; position: static;"
                     :disabled="disabledSalvar">
                     Salvar
                 </button>
