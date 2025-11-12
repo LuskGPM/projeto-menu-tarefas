@@ -37,27 +37,6 @@
                 </div>
             </div>
         </nav>
-
-        <!--
-        <nav class="navbar">
-            <div class="navbar-brand">
-                <span>{{ nomeUser }}</span>
-            </div>
-            <div class="navbar-menu">
-                <button class="nav-btn" @click="redirect_tarefas">
-                    <i class="bi bi-list-task"></i>
-                    Tarefas
-                </button>
-                <button class="nav-btn" @click="redirect_user">
-                    <i class="bi bi-person"></i>
-                    Perfil
-                </button>
-                <button class="nav-btn logout-btn" @click="logout">
-                    <i class="bi bi-box-arrow-left"></i>
-                    Sair
-                </button>
-            </div>
-        </nav> -->
     </header>
 </template>
 
