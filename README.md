@@ -196,7 +196,6 @@ CREATE TABLE tarefa (
 ### Performance
 - **Cache Redis** inteligente por usuário
 - **Connection pooling** MySQL (pool_size=10)
-- **Operações assíncronas** com asyncio.gather()
 - **Sliding sessions** com renovação automática (30min)
 - **Build otimizado** com minificação e compressão
 
