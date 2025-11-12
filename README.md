@@ -325,4 +325,4 @@ Sistema completo de gerenciamento de tarefas pronto para produção, com todas a
 
 **Stack**: Vue.js 3 + FastAPI + Redis + MySQL + Bootstrap 5
 
-**Versão de Produção**: Arquivos compilados disponíveis em `/app/view/dist/`
+**Criado por** - Lucas Melo
