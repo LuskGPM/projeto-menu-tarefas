@@ -2,8 +2,7 @@
     <header>
         <nav class="navbar">
             <div id="header-sanduiche">
-                <span class="material-symbols-outlined span" 
-               style="padding-left: 10px;" @click="toggle_menu">
+                <span class="material-symbols-outlined span" style="padding-left: 10px;" @click="toggle_menu">
                     menu
                 </span>
             </div>
@@ -114,7 +113,7 @@ export default {
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
+    z-index: 9998 !important;
 }
 
 .sidebar {
@@ -125,7 +124,7 @@ export default {
     width: 300px;
     height: 100vh;
     background: white;
-    z-index: 999;
+    z-index: 9999 !important;
     transition: left 0.3s ease-out;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 
