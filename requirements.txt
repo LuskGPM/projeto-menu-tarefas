@@ -1,8 +1,19 @@
-redis>=7.0.0
+# Core Framework
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
-sqlalchemy>=2.0.0
-PyMySQL>=1.1.0
-bcrypt>=4.0.0
 pydantic>=2.0.0
+
+# Database - MySQL
+sqlalchemy>=2.0.0
 aiomysql>=0.2.0
+PyMySQL>=1.1.0
+
+# Database - Redis
+redis>=5.0.0
+
+# Security
+bcrypt>=4.0.0
+
+# Development (optional)
+# pytest>=7.0.0
+# pytest-asyncio>=0.21.0
