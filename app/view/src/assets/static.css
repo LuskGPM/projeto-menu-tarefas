@@ -17,23 +17,3 @@
     padding: 0;
     scrollbar-width: none;
 }
-
-body {
-    background-color: var(--cinza-claro) !important;
-}
-
-/* TOGGLE POSITION STATIC QUANDO OFFCANVAS ATIVO - TODOS MENOS EXCEÇÕES */
-.offcanvas-active *:not(.offcanvas):not(.offcanvas *):not(.navbar):not(.navbar *) {
-    position: static !important;
-}
-
-/* ESCONDE LABELS E REMOVE DISABLED DOS BOTÕES QUANDO OFFCANVAS ATIVO */
-.offcanvas-active label {
-    display: none !important;
-}
-
-.offcanvas-active .btn:disabled {
-    pointer-events: auto !important;
-    opacity: 1 !important;
-    position: static !important;
-}

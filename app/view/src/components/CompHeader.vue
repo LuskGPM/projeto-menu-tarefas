@@ -1,31 +1,63 @@
 <template>
     <header>
-        <nav class="navbar">
-            <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#sidebar" @click="toggleOffcanvas">
-                <i class="bi bi-list span"></i>
-            </button>
 
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title">{{ nomeUser }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <div class="menu-items mb-4" @click="redirect_user">
-                        <i class="bi bi-person span"></i>
-                        Perfil
-                    </div>
-                    <div class="menu-items mb-4" @click="redirect_tarefas">
-                        <i class="bi bi-list-task span"></i>
-                        Tarefas
-                    </div>
-                    <div class="menu-items" @click="logout">
-                        <i class="bi bi-box-arrow-left span exit"></i>
-                        Sair
-                    </div>
+        <nav class="navbar navbar-expand-xxl">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" style="opacity: .7;">{{ nomeUser }}</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <button @click="redirect_tarefas" class="nav-link"
+                                :class="{ 'nav-link-active': telaAtual == 'principal' }">Tarefas</button>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Usuario
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <button class="dropdown-item perfil" @click="redirect_user">
+                                        <i class="bi bi-person"></i>
+                                        Perfil
+                                    </button>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" @click="logout" style="color: red;">
+                                        <i class="bi bi-box-arrow-left"></i>
+                                        Sair
+                                    </button>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
+
+        <!--
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <span>{{ nomeUser }}</span>
+            </div>
+            <div class="navbar-menu">
+                <button class="nav-btn" @click="redirect_tarefas">
+                    <i class="bi bi-list-task"></i>
+                    Tarefas
+                </button>
+                <button class="nav-btn" @click="redirect_user">
+                    <i class="bi bi-person"></i>
+                    Perfil
+                </button>
+                <button class="nav-btn logout-btn" @click="logout">
+                    <i class="bi bi-box-arrow-left"></i>
+                    Sair
+                </button>
+            </div>
+        </nav> -->
     </header>
 </template>
 
@@ -36,20 +68,19 @@ export default {
     name: 'CompHeader',
     data() {
         return {
-            nomeUser: ''
+            nomeUser: 'Usuario',
+            telaAtual: ''
         }
     },
     created() {
         this.buscar_nome()
-    },
-    mounted() {
-        const offcanvas = document.getElementById('sidebar')
-        if (offcanvas) {
-            offcanvas.addEventListener('hidden.bs.offcanvas', () => {
-                document.body.classList.remove('offcanvas-active')
-            })
+        if (this.$route.path == '/tela-principal') {
+            this.telaAtual == 'principal'
+        } else {
+            this.telaAtual == 'perfil'
         }
     },
+
     methods: {
         async logout() {
             try {
@@ -72,19 +103,10 @@ export default {
             }
         },
         redirect_user() {
-            if (this.$route.path != '/tela-user') {
-                this.toggleOffcanvas()
-            }
             this.$router.push('/tela-user')
         },
         redirect_tarefas() {
-            if (this.$route.path != '/tela-principal') {
-                this.toggleOffcanvas()
-            }
             this.$router.push('/tela-principal')
-        },
-        toggleOffcanvas() {
-            document.body.classList.toggle('offcanvas-active')
         }
     }
 }
@@ -95,16 +117,28 @@ export default {
 
 .navbar {
     background-color: var(--azul-escuro);
-    padding: 20px;
     box-shadow: 3px 3px 7px rgba(69, 69, 69, 0.211);
-    position: sticky;
-    top: 0;
-}
+    height: 80px;
 
-.span {
-    font-size: 3em !important;
-    cursor: pointer;
-    color: var(--branco-painel-texto);
+    .perfil {
+        color: var(--azul-escuro);
+    }
+
+    a,
+    button,
+    li {
+        color: var(--branco-painel-texto);
+
+        &:hover,
+        &:focus {
+            color: var(--azul-claro);
+        }
+    }
+
+    li {
+        font-size: 1em;
+    }
+
 }
 
 .menu-items {
@@ -122,6 +156,4 @@ export default {
 .menu-items .span.exit {
     color: var(--vermelho-claro);
 }
-
-
 </style>
