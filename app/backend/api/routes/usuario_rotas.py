@@ -42,7 +42,7 @@ async def rota_user_update(user_data: UsuarioUpdate) -> dict:
         user_control = UsuarioControler()
         
         if user_data.nickname:
-            if user_control._nickname_exists(user_data.nickname):
+            if await user_control._nickname_exists(user_data.nickname):
                 return {'message': 'Nickname já está em uso'}
             return
         
