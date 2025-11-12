@@ -298,6 +298,9 @@ app/backend/model/mysql_db/connection/connection_mysql.py
 
 # Redis (OBRIGATÓRIO - use seu próprio)
 app/backend/model/redis_db/connection/connection_config.py
+
+# Cors (localhost do servidor que roda o front)
+app/backend/api/server/server.py
 ```
 
 ### Exemplo Redis Cloud (Gratuito)
