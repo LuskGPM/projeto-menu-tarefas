@@ -290,7 +290,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## ⚙️ Configuração Necessária
 
 ### Arquivos de Configuração
-Antes de executar, você deve criar e configurar:
+Antes de executar, você deve criar e/ou configurar:
 
 ```bash
 # MySQL
