@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-12 d-flex">
                                 <button type="button" class="btn btn-success" :disabled="bloquearAlterarSenha"
-                                    @click="alterar_senha">Salvar</button>
+                                    @click="alterar_senha" style="position: static;">Salvar</button>
                                 <div v-if="loadingUpSenha" class="spinner-border col-md-6" role="status"
                                     style="align-self: center; margin-left: 10px;">
                                     <span class="visually-hidden">Loading...</span>
