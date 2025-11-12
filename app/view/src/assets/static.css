@@ -17,3 +17,16 @@
     padding: 0;
     scrollbar-width: none;
 }
+
+body {
+    background-color: var(--cinza-claro) !important;
+}
+
+/* TOGGLE POSITION STATIC QUANDO OFFCANVAS ATIVO - TODOS MENOS EXCEÇÕES */
+.offcanvas-active *:not(.offcanvas):not(.offcanvas *):not(.navbar):not(.navbar *) {
+    position: static !important;
+
+    label {
+        display: none;
+    }
+}

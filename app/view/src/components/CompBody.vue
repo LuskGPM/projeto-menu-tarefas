@@ -73,6 +73,7 @@ export default {
 .main-body {
   display: flex;
   flex-direction: column;
+  background-color: var(--cinza-claro) !important;
 }
 
 .button-body {

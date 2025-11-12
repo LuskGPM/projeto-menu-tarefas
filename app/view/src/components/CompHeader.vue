@@ -1,7 +1,7 @@
 <template>
     <header>
         <nav class="navbar">
-            <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+            <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#sidebar" @click="toggleOffcanvas">
                 <i class="bi bi-list span"></i>
             </button>
 
@@ -42,6 +42,14 @@ export default {
     created() {
         this.buscar_nome()
     },
+    mounted() {
+        const offcanvas = document.getElementById('sidebar')
+        if (offcanvas) {
+            offcanvas.addEventListener('hidden.bs.offcanvas', () => {
+                document.body.classList.remove('offcanvas-active')
+            })
+        }
+    },
     methods: {
         async logout() {
             try {
@@ -64,10 +72,19 @@ export default {
             }
         },
         redirect_user() {
+            if (this.$route.path != '/tela-user') {
+                this.toggleOffcanvas()
+            }
             this.$router.push('/tela-user')
         },
         redirect_tarefas() {
+            if (this.$route.path != '/tela-principal') {
+                this.toggleOffcanvas()
+            }
             this.$router.push('/tela-principal')
+        },
+        toggleOffcanvas() {
+            document.body.classList.toggle('offcanvas-active')
         }
     }
 }
@@ -105,4 +122,6 @@ export default {
 .menu-items .span.exit {
     color: var(--vermelho-claro);
 }
+
+
 </style>
