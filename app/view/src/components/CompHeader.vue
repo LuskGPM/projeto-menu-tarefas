@@ -1,39 +1,30 @@
 <template>
     <header>
         <nav class="navbar">
-            <div id="header-sanduiche">
-                <span class="material-symbols-outlined span" style="padding-left: 10px;" @click="toggle_menu">
-                    menu
-                </span>
+            <button class="btn" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+                <i class="bi bi-list span"></i>
+            </button>
+
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">{{ nomeUser }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="menu-items mb-4" @click="redirect_user">
+                        <i class="bi bi-person span"></i>
+                        Perfil
+                    </div>
+                    <div class="menu-items mb-4" @click="redirect_tarefas">
+                        <i class="bi bi-list-task span"></i>
+                        Tarefas
+                    </div>
+                    <div class="menu-items" @click="logout">
+                        <i class="bi bi-box-arrow-left span exit"></i>
+                        Sair
+                    </div>
+                </div>
             </div>
-
-            <aside v-if="mostrarSideBar" class="overlay" @click="fechar_menu"></aside>
-
-            <aside class="sidebar" :class="{ 'sidebar-aberto': mostrarSideBar }">
-                <div id="header-close" @click="fechar_menu" class="menu-items">
-                    <p>{{ nomeUser }}</p>
-
-                    <span class="material-symbols-outlined span">
-                        close
-                    </span>
-                </div>
-                <div id="header-perfil" class="menu-items" @click="redirect_user">
-                    <span class="material-symbols-outlined span">
-                        account_circle
-                    </span>
-                    Perfil
-                </div>
-                <div class="menu-items" @click="redirect_tarefas">
-                    <span class="bi bi-list-task span"></span>
-                    Tarefas
-                </div>
-                <div id="header-logout" class="menu-items" @click="logout">
-                    <span class="material-symbols-outlined span">
-                        logout
-                    </span>
-                    Sair
-                </div>
-            </aside>
         </nav>
     </header>
 </template>
@@ -45,7 +36,6 @@ export default {
     name: 'CompHeader',
     data() {
         return {
-            mostrarSideBar: false,
             nomeUser: ''
         }
     },
@@ -53,12 +43,6 @@ export default {
         this.buscar_nome()
     },
     methods: {
-        toggle_menu() {
-            this.mostrarSideBar = !this.mostrarSideBar
-        },
-        fechar_menu() {
-            this.mostrarSideBar = false
-        },
         async logout() {
             try {
                 await axios('http://127.0.0.1:8000/api/user/logout')
@@ -106,66 +90,19 @@ export default {
     color: var(--branco-painel-texto);
 }
 
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 9998 !important;
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
 }
 
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -300px;
-    /* escondido inicialmente */
-    width: 300px;
-    height: 100vh;
-    background: white;
-    z-index: 9999 !important;
-    transition: left 0.3s ease-out;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-
-    .menu-items {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: var(--azul-escuro);
-
-        .span {
-            color: var(--azul-escuro);
-        }
-    }
-
-    .menu-items:first-child {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-end;
-        font-size: .9em;
-
-        .span {
-            box-sizing: border-box;
-            font-size: 2.5em !important;
-            border: 2px solid transparent;
-
-            &:hover {
-                border-radius: 10px;
-                border: 2px solid var(--azul-escuro);
-            }
-        }
-    }
-
-    #header-logout .span {
-        color: var(--vermelho-claro);
-    }
+.menu-items .span {
+    color: var(--azul-escuro);
 }
 
-.sidebar-aberto {
-    left: 0;
-    /* aparece quando ativo */
+.menu-items .span.exit {
+    color: var(--vermelho-claro);
 }
 </style>
